@@ -3,13 +3,13 @@
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 ' Python based magic mirror application, based on pygame  '
-' library as well as Reddit and BOM weather data. No      '
-' license as of yet, unfinished work.                     '
+' library as well as Reddit and BOM weather data.         '
+' Licensed under MIT license.                             '
 '                                                         '
-'                                  Jackson Sommerich 2016 '
+'                              (c) Jackson Sommerich 2016 '
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-from __future__ import print_function
+from __future__ import print_function, division
 from urllib2 import Request, urlopen
 from sys import argv
 from platform import system
@@ -76,8 +76,10 @@ def parse_weather_info(city, data):
 
     # Initialise variables, index = position of the city in the string,
     # also acts as the cursor to the string:
-    string, result, index = "", [], data.find(city)
 
+    # Capitolise city name (just in case):
+    city = city.title()
+    string, result, index = "", [], data.find(city)
     while True:
         # Add the next letter to the string and increment the cursor by 1:
         string = string + data[index]
@@ -119,26 +121,26 @@ def parse_weather_info(city, data):
     return (city, temperature, description, condition)
 
 
-def get_news(subreddit):
+def get_news(sub, limit=settings.item_count):
     '''get_news(subreddit: str) -> news: [str]'''
     user_agent = settings.user_agent.format(system(), settings.version)
     reddit, result = praw.Reddit(user_agent=user_agent), {}
-    submission = reddit.get_subreddit(subreddit).get_top_from_day(limit=settings.item_count)
+    submission = reddit.get_subreddit(sub).get_top_from_day(limit=limit)
     result = []
     for story in submission:
         result.append(story.title)
     return result
 
 
-def truncate(content, title=False, length=65, suffix='...'):
-    '''truncate(content, [title: bool], [length: int], [suffix: str])
+def truncate(text, title=False, length=65, suffix="..."):
+    '''truncate(text, [title: bool], [length: int], [suffix: str])
     -> unicode'''
     if title:
-        content = content.title()
-    if len(content) <= length:
-        return unicode(content)
+        text = text.title()
+    if len(text) <= length:
+        return unicode(text)
     else:
-        return unicode(' '.join(content[:length+1].split(' ')[0:-1]) + suffix)
+        return unicode(' '.join(text[:length+1].split(' ')[0:-1]) + suffix)
 
 
 def main():
@@ -157,7 +159,7 @@ def main():
     # Init pygame display:
     pygame.init()
     # Resoltion, hardcoded, don't change, will probably break things:
-    screen_size = settings.resolution
+    screen_size = width, height = settings.resolution
     # Pure black for background:
     background_colour = (0, 0, 0)
     # Pure white for main text:
@@ -165,7 +167,6 @@ def main():
     # 50% grey for weather icons and subtext:
     grey_text_colour = (128, 128, 128)
     # Sets display modes to be injected into set_mode:
-
     default = "window"
     if len(argv) == 2:
         try:
@@ -179,16 +180,13 @@ def main():
     # If no mode is specified
     else:
         modes = display.modes[default]
-
     # Enables clock, used for frame rate limiter:
     game_clock = pygame.time.Clock()
-
     # Sets font options and sizes, TTF fonts only:
     font = pygame.font.Font("resources/font.ttf", 52)
     font2 = pygame.font.Font("resources/font.ttf", 40)
     font3 = pygame.font.Font("resources/font.ttf", 22)
     font4 = pygame.font.Font("resources/font.ttf", 30)
-
     # Initialises the display
     screen = pygame.display.set_mode(screen_size, modes)
     screen.fill(background_colour)
@@ -198,18 +196,15 @@ def main():
         centerx=screen.get_width()/2, centery=screen.get_height()/2)
     screen.blit(loading_text, loading_text_pos)
     pygame.display.flip()
-
     # fetches data for weather info:
     weather_info = fetch_weather_info()
-
     # Sets text for weather info, (text, antialiasing, colour, [background]):
     city_text = font.render(weather_info[0], 1, white_text_colour)
-    # \xb0 = º:
+    # \xb0 is the unicode degrees symbol (º):
     temp_text = font2.render("{}\xb0C".format(weather_info[1]),
                              1, white_text_colour)
     condition_text = font3.render(str(weather_info[2]), 1, white_text_colour)
     weather_icon = pygame.image.load("resources/{}".format(weather_info[3]))
-
     sub_offset, news, stories, stories_pos = -10, [], [], []
     for sub in settings.subreddits:
         news = []
@@ -220,24 +215,21 @@ def main():
         sub_offset += 34
         for story in news:
             stories.append(font3.render(truncate(story), 1, white_text_colour))
-            height = sub_offset
-            stories_pos.append(stories[-1].get_rect(left=300, top=(height)))
+            stories_pos.append(stories[-1].get_rect(left=300, top=(sub_offset)))
             sub_offset += 26
-
     # Gets size information for weather text for positioning:
-    city_textpos = city_text.get_rect(left=10, top=0)
+    city_textpos = city_text.get_rect(left=0, top=0)
     temp_text_pos = temp_text.get_rect(right=250, top=170)
     condition_text_pos = condition_text.get_rect(right=250, top=220)
-    weather_icon = pygame.transform.smoothscale(weather_icon, (250, 250))
+    weather_icon = pygame.transform.smoothscale(
+        weather_icon, (int(width/4.21), int(height/2.37)))
     weather_icon_pos = weather_icon.get_rect(left=20, top=50)
-
     while True:
         # Checks for keyboard events and quits if necessary:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 quit()
-
         # Sets the framerate (located in settings.py):
         game_clock.tick(settings.fps_limit)
         # Draws the background:
@@ -252,10 +244,11 @@ def main():
             screen.blit(story, story_pos)
         # Renders the fps counter:
         if settings.display_fps:
-            fps = str(round(game_clock.get_fps()))
-            fps = font3.render("{} fps. Press Esc to quit.".format(fps[0]),
-                               1, grey_text_colour)
-            screen.blit(fps, fps.get_rect(left=10, bottom=screen.get_height() - 10))
+            fps = str(int(game_clock.get_fps()))
+            fps = font3.render(
+                "{} fps. Press Esc to quit.".format(fps), 1, grey_text_colour)
+            fps_pos = fps.get_rect(left=0, bottom=height)
+            screen.blit(fps, fps_pos)
         pygame.display.flip()
 
 

@@ -15,7 +15,7 @@ conditions = ["sun",
               "tornado"]
 
 translation = {"sun": "sun",
-               "cloud": "cloud_250",
+               "cloud": "cloud",
                "rain": "rain",
                "heavy rain": "heavy_rain",
                "shower": "rain",
