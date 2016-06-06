@@ -205,8 +205,8 @@ def main():
     # Sets text for weather info, (text, antialiasing, colour, [background]):
     city_text = font.render(weather_info[0], 1, white_text_colour)
     # \xb0 = º:
-    temp_text = font2.render("{}\xb0C".format(weather_info[1])
-                             , 1, white_text_colour)
+    temp_text = font2.render("{}\xb0C".format(weather_info[1]),
+                             1, white_text_colour)
     condition_text = font3.render(str(weather_info[2]), 1, white_text_colour)
     weather_icon = pygame.image.load("resources/{}".format(weather_info[3]))
 
