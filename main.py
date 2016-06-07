@@ -148,19 +148,16 @@ def get_weather_display(font, colour, city=settings.weather_city):
     # Sets text for weather info, (text, antialiasing, colour, [background]):
     # city_text, temp_text, condition_text, weather_icon then positions
     weather_text = (
+        pygame.transform.smoothscale(pygame.image.load("resources/{}".format(weather_info[3])),(int(settings.resolution[0]/4.21),int(settings.resolution[1]/2.37))),
         font[1].render(weather_info[0], 1, colour[2]),
         font[2].render("{}\xb0C".format(weather_info[1]), 1, colour[2]),
-        font[3].render(str(weather_info[2]), 1, colour[2]),
-        pygame.transform.smoothscale(
-            pygame.image.load("resources/{}".format(weather_info[3])),
-            (int(settings.resolution[0]/4.21),
-             int(settings.resolution[1]/2.37)))
+        font[3].render(str(weather_info[2]), 1, colour[2])
         )
     weather_text_pos = (
-        weather_text[0].get_rect(left=0, top=0),
-        weather_text[1].get_rect(right=250, top=170),
-        weather_text[2].get_rect(right=250, top=220),
-        weather_text[3].get_rect(left=20, top=50)
+        weather_text[0].get_rect(left=20, top=50),
+        weather_text[1].get_rect(left=0, top=0),
+        weather_text[2].get_rect(right=250, top=170),
+        weather_text[3].get_rect(right=250, top=220)
     )
     return (weather_text, weather_text_pos)
 
