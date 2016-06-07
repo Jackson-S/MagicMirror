@@ -227,9 +227,7 @@ def main():
     #  - Icons to text (using OW font)
     #  - Automatic on/off based on motion/light sensor
 
-    # Tell the display to refresh:
     refresh, last_refresh_time = True, 0
-    # Init pygame display:
     pygame.init()
     # Resoltion, hardcoded, don't change, will probably break things:
     width, height = settings.resolution
