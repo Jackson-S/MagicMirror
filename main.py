@@ -213,7 +213,7 @@ def check_events(events):
             quit()
 
 
-def main(refresh=True):
+def main():
     '''main() -> None
     UI of the program, calls all other modules.
     '''
@@ -227,6 +227,8 @@ def main(refresh=True):
     #  - Icons to text (using OW font)
     #  - Automatic on/off based on motion/light sensor
 
+    # Tell the display to refresh:
+    refresh, last_refresh_time = True, 0
     # Init pygame display:
     pygame.init()
     # Resoltion, hardcoded, don't change, will probably break things:
@@ -244,8 +246,12 @@ def main(refresh=True):
     screen.blit(load_str, load_str.get_rect(centerx=width/2, centery=height/2))
     pygame.display.flip()
     while True:
-        # Sets the framerate (located in settings.py):
-        game_clock.tick(settings.fps_limit)
+        time_since_refresh = int(time.time()) - last_refresh_time
+        # Sets the framerate (located in settings.py), 0 = no limit:
+        if settings.fps_limit != 0:
+            game_clock.tick(settings.fps_limit)
+        else:
+            game_clock.tick()
         # Checks to see if the information needs to be refreshed:
         if refresh:
             # Gets the weather
@@ -253,6 +259,7 @@ def main(refresh=True):
             # Gets the news
             stories, stories_pos = get_news_display(font, colour)
             refresh = False
+            last_refresh_time = int(time.time())
         # Checks for keyboard events (quit), no return:
         check_events(pygame.event.get())
         # Draws the background:
@@ -263,11 +270,13 @@ def main(refresh=True):
         for story, story_pos in zip(stories, stories_pos):
             screen.blit(story, story_pos)
         # Renders the fps counter:
-        if settings.display_framerate:
+        if settings.display_framerate is True:
             fps, fps_pos = get_framerate(font, colour, game_clock)
             screen.blit(fps, fps_pos)
         # Renders the total display:
         pygame.display.flip()
+        if time_since_refresh >= settings.update_delay:
+            refresh = True
 
 
 if __name__ == '__main__':
