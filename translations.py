@@ -41,19 +41,19 @@ modes = {"--fullscreen": -2147483648,
 
 # Sets the colour pallete for the program, black, grey, white:
 colour = [
-    (0, 0, 0),
-    (128, 128, 128),
-    (255, 255, 255)
-    ]
+         (0, 0, 0),
+         (128, 128, 128),
+         (255, 255, 255)
+         ]
 
 # Sets font options and sizes, TTF fonts only:
 fonts = [
-    ("resources/font.ttf", 80),
-    ("resources/font.ttf", 52),
-    ("resources/font.ttf", 40),
-    ("resources/font.ttf", 22),
-    ("resources/font.ttf", 30)
-    ]
+        ("resources/font.ttf", 80),
+        ("resources/font.ttf", 52),
+        ("resources/font.ttf", 40),
+        ("resources/font.ttf", 22),
+        ("resources/font.ttf", 30)
+        ]
 
 disp_err_str = '''Unknown mode {}, using default of "{}"
 supported modes are fullscreen, doublebuffered, noframe and window'''
