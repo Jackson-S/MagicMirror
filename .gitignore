@@ -90,3 +90,6 @@ ENV/
 
 # OSX files
 .DS_Store
+
+# Program settings
+weather_data
