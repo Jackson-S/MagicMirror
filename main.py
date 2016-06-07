@@ -141,14 +141,17 @@ def truncate(text, title=False, length=65, suffix="..."):
         return unicode(' '.join(text[:length+1].split(' ')[0:-1]) + suffix)
 
 
-def get_weather_display(font, colour, city=settings.weather_city):
+def get_weather_display(font, colour):
     '''returns the imagery and text for the weather display'''
+    city = settings.weather_city
     # fetches data for weather info:
     weather_info = fetch_weather_info()
     # Sets text for weather info, (text, antialiasing, colour, [background]):
     # city_text, temp_text, condition_text, weather_icon then positions
     weather_text = (
-        pygame.transform.smoothscale(pygame.image.load("resources/{}".format(weather_info[3])),(int(settings.resolution[0]/4.21),int(settings.resolution[1]/2.37))),
+        pygame.transform.smoothscale(pygame.image.load("resources/{}".format(
+            weather_info[3])), (int(settings.resolution[0]/4.21),
+                                int(settings.resolution[1]/2.37))),
         font[1].render(weather_info[0], 1, colour[2]),
         font[2].render("{}\xb0C".format(weather_info[1]), 1, colour[2]),
         font[3].render(str(weather_info[2]), 1, colour[2])
@@ -162,8 +165,9 @@ def get_weather_display(font, colour, city=settings.weather_city):
     return (weather_text, weather_text_pos)
 
 
-def get_news_display(font, colour, subs=settings.subreddits):
+def get_news_display(font, colour):
     '''returns updated text'''
+    subs = settings.subreddits
     sub_offset, news, stories, stories_pos = -10, [], [], []
     for sub in subs:
         news = []
@@ -234,6 +238,7 @@ def main(refresh=True):
     game_clock = pygame.time.Clock()
     # Initialises the display
     screen = pygame.display.set_mode((width, height), get_display_mode())
+    pygame.mouse.set_visible(settings.mouse_visible)
     screen.fill(colour[0])
     load_str = font[0].render("Loading...", 1, colour[2])
     screen.blit(load_str, load_str.get_rect(centerx=width/2, centery=height/2))
