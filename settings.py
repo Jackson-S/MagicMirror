@@ -3,7 +3,8 @@ version = "0.1"
 delay_before_close = 60
 resolution = (1024, 600)
 fps_limit = 60
-display_fps = True
+def_disp_mode = "--window"
+display_framerate = True
 
 '''Weather Settings'''
 # URL for bom weather data. Do not touch:

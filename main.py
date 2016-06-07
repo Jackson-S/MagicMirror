@@ -20,8 +20,7 @@ import praw
 
 # Import external settings files:
 import settings
-import weather_data
-import display
+import translations
 
 
 def fetch_weather_info():
@@ -40,7 +39,7 @@ def fetch_weather_info():
     #  - Change save file location
 
     try:
-        with open("resources/saved_weather_data", "r") as save_data:
+        with open("resources/weather_data", "r") as save_data:
             # Get elapsed time since update and check against update delay:
             time_since_check = time.time() - float(save_data.readline())
             if time_since_check > settings.weather_update_delay:
@@ -49,11 +48,11 @@ def fetch_weather_info():
             else:
                 result = str(save_data.read())
 
-    # Exception if saved_weather_data can't be opened:
+    # Exception if weather_data can't be opened:
     except IOError:
-        # Fetch data from a URL and save it to saved_weather_data,
+        # Fetch data from a URL and save it to weather_data,
         # then call self:
-        with open("resources/saved_weather_data", "w") as save_data:
+        with open("resources/weather_data", "w") as save_data:
             current_time = str(time.time())
             bom_data = str(urlopen(Request(settings.weather_url)).read())
             save_data.write("{}\n{}".format(current_time, bom_data))
@@ -63,12 +62,12 @@ def fetch_weather_info():
 
 
 def parse_weather_info(city, data):
-    '''parse_weather_info(city, data) ->
-    (city, temperature, description, icon)
+    '''parse_weather_info(city, data) -> (city, temperature, description, icon)
 
     Parses bureau of meteorology IDA00100.dat file from their FTP server and
     returns city name, temperature, current conditions and the appropriate
-    icon to represent the weather. Call through fetch_weather_info().'''
+    icon to represent the weather. Call through fetch_weather_info().
+    '''
 
     # Planned features:
     #  - distinguising between night and day
@@ -102,14 +101,14 @@ def parse_weather_info(city, data):
     # weather icon as none is supplied.
     # Typical...
     description = result[-1].lower()
-    condition = [condition for condition in weather_data.conditions
+    condition = [condition for condition in translations.conditions
                  if description.find(condition) != -1]
 
     # Format the condition for a picture descriptor by looking in a
     # predefined dictionary (located in weather settings), which
     # contains the appropriate icon for the found descriptor
     if len(condition) != 0:
-        condition = "{}.png".format(weather_data.translation[condition[0]])
+        condition = "{}.png".format(translations.translation[condition[0]])
 
     # If the description doesn't contain relevant info then use
     # a gigantic question mark picture because again, no single
@@ -133,8 +132,7 @@ def get_news(sub, limit=settings.item_count):
 
 
 def truncate(text, title=False, length=65, suffix="..."):
-    '''truncate(text, [title: bool], [length: int], [suffix: str])
-    -> unicode'''
+    '''truncate(text, title: bool, length: int, suffix: str) -> unicode'''
     if title:
         text = text.title()
     if len(text) <= length:
@@ -143,9 +141,81 @@ def truncate(text, title=False, length=65, suffix="..."):
         return unicode(' '.join(text[:length+1].split(' ')[0:-1]) + suffix)
 
 
-def main():
+def get_weather_display(font, colour, city=settings.weather_city):
+    '''returns the imagery and text for the weather display'''
+    # fetches data for weather info:
+    weather_info = fetch_weather_info()
+    # Sets text for weather info, (text, antialiasing, colour, [background]):
+    # city_text, temp_text, condition_text, weather_icon then positions
+    weather_text = (
+        font[1].render(weather_info[0], 1, colour[2]),
+        font[2].render("{}\xb0C".format(weather_info[1]), 1, colour[2]),
+        font[3].render(str(weather_info[2]), 1, colour[2]),
+        pygame.transform.smoothscale(
+            pygame.image.load("resources/{}".format(weather_info[3])),
+            (int(settings.resolution[0]/4.21),
+             int(settings.resolution[1]/2.37)))
+        )
+    weather_text_pos = (
+        weather_text[0].get_rect(left=0, top=0),
+        weather_text[1].get_rect(right=250, top=170),
+        weather_text[2].get_rect(right=250, top=220),
+        weather_text[3].get_rect(left=20, top=50)
+    )
+    return (weather_text, weather_text_pos)
+
+
+def get_news_display(font, colour, subs=settings.subreddits):
+    '''returns updated text'''
+    sub_offset, news, stories, stories_pos = -10, [], [], []
+    for sub in subs:
+        news = []
+        news.extend(get_news(sub))
+        sub_offset += 10
+        stories.append(font[4].render(truncate(sub, True), 1, colour[2]))
+        stories_pos.append(stories[-1].get_rect(left=285, top=sub_offset))
+        sub_offset += 34
+        for story in news:
+            stories.append(font[3].render(truncate(story), 1, colour[2]))
+            stories_pos.append(stories[-1].get_rect(left=300, top=(sub_offset)))
+            sub_offset += 26
+    return (stories, stories_pos)
+
+
+def get_display_mode():
+    '''returns the desired display mode integer'''
+    try:
+        mode = argv[1]
+    except IndexError:
+        return translations.modes[settings.def_disp_mode]
+    try:
+        return translations.modes[mode]
+    except KeyError:
+        print(translations.disp_err_str.format(mode, settings.def_disp_mode))
+        return translations.modes[settings.def_disp_mode]
+
+
+def get_framerate(font, colour, clock):
+    fps = font[3].render(
+        "{} fps. Press Esc to quit.".format(
+            str(int(clock.get_fps()))), 1, colour[1]
+        )
+    fps_pos = fps.get_rect(left=5, bottom=settings.resolution[1])
+    return (fps, fps_pos)
+
+
+def check_events(events):
+    # Checks for keyboard events and quits if necessary:
+    for event in events:
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            pygame.quit()
+            quit()
+
+
+def main(refresh=True):
     '''main() -> None
-    UI of the program, calls all other modules.'''
+    UI of the program, calls all other modules.
+    '''
 
     # Planned features:
     #  - Auto-refresh
@@ -159,96 +229,42 @@ def main():
     # Init pygame display:
     pygame.init()
     # Resoltion, hardcoded, don't change, will probably break things:
-    screen_size = width, height = settings.resolution
-    # Pure black for background:
-    background_colour = (0, 0, 0)
-    # Pure white for main text:
-    white_text_colour = (255, 255, 255)
-    # 50% grey for weather icons and subtext:
-    grey_text_colour = (128, 128, 128)
-    # Sets display modes to be injected into set_mode:
-    default = "window"
-    if len(argv) == 2:
-        try:
-            modes = display.modes[argv[1]]
-
-        # Exception for invalid key:
-        except KeyError:
-            print("Unknown mode, using default of \"{}\"".format(default))
-            modes = display.modes[default]
-            time.sleep(1)
-    # If no mode is specified
-    else:
-        modes = display.modes[default]
+    width, height = settings.resolution
+    # Initialise the fonts and colours from translations.py:
+    colour = translations.colour
+    font = [pygame.font.Font(ttf, size) for ttf, size in translations.fonts]
     # Enables clock, used for frame rate limiter:
     game_clock = pygame.time.Clock()
-    # Sets font options and sizes, TTF fonts only:
-    font = pygame.font.Font("resources/font.ttf", 52)
-    font2 = pygame.font.Font("resources/font.ttf", 40)
-    font3 = pygame.font.Font("resources/font.ttf", 22)
-    font4 = pygame.font.Font("resources/font.ttf", 30)
     # Initialises the display
-    screen = pygame.display.set_mode(screen_size, modes)
-    screen.fill(background_colour)
-    loading_font = pygame.font.Font("resources/font.ttf", 80)
-    loading_text = loading_font.render("Loading...", 1, white_text_colour)
-    loading_text_pos = loading_text.get_rect(
-        centerx=screen.get_width()/2, centery=screen.get_height()/2)
-    screen.blit(loading_text, loading_text_pos)
+    screen = pygame.display.set_mode((width, height), get_display_mode())
+    screen.fill(colour[0])
+    load_str = font[0].render("Loading...", 1, colour[2])
+    screen.blit(load_str, load_str.get_rect(centerx=width/2, centery=height/2))
     pygame.display.flip()
-    # fetches data for weather info:
-    weather_info = fetch_weather_info()
-    # Sets text for weather info, (text, antialiasing, colour, [background]):
-    city_text = font.render(weather_info[0], 1, white_text_colour)
-    # \xb0 is the unicode degrees symbol (º):
-    temp_text = font2.render("{}\xb0C".format(weather_info[1]),
-                             1, white_text_colour)
-    condition_text = font3.render(str(weather_info[2]), 1, white_text_colour)
-    weather_icon = pygame.image.load("resources/{}".format(weather_info[3]))
-    sub_offset, news, stories, stories_pos = -10, [], [], []
-    for sub in settings.subreddits:
-        news = []
-        news.extend(get_news(sub))
-        sub_offset += 10
-        stories.append(font4.render(truncate(sub, True), 1, white_text_colour))
-        stories_pos.append(stories[-1].get_rect(left=285, top=sub_offset))
-        sub_offset += 34
-        for story in news:
-            stories.append(font3.render(truncate(story), 1, white_text_colour))
-            stories_pos.append(stories[-1].get_rect(left=300, top=(sub_offset)))
-            sub_offset += 26
-    # Gets size information for weather text for positioning:
-    city_textpos = city_text.get_rect(left=0, top=0)
-    temp_text_pos = temp_text.get_rect(right=250, top=170)
-    condition_text_pos = condition_text.get_rect(right=250, top=220)
-    weather_icon = pygame.transform.smoothscale(
-        weather_icon, (int(width/4.21), int(height/2.37)))
-    weather_icon_pos = weather_icon.get_rect(left=20, top=50)
     while True:
-        # Checks for keyboard events and quits if necessary:
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                quit()
         # Sets the framerate (located in settings.py):
         game_clock.tick(settings.fps_limit)
+        # Checks to see if the information needs to be refreshed:
+        if refresh:
+            # Gets the weather
+            weather, weather_pos = get_weather_display(font, colour)
+            # Gets the news
+            stories, stories_pos = get_news_display(font, colour)
+            refresh = False
+        # Checks for keyboard events (quit), no return:
+        check_events(pygame.event.get())
         # Draws the background:
-        screen.fill(background_colour)
-
-        # Blits each element to the screen (element, position):
-        screen.blit(weather_icon, weather_icon_pos)
-        screen.blit(city_text, city_textpos)
-        screen.blit(temp_text, temp_text_pos)
-        screen.blit(condition_text, condition_text_pos)
+        screen.fill(colour[0])
+        # Blits each element to the screen:
+        for item, item_pos in zip(weather, weather_pos):
+            screen.blit(item, item_pos)
         for story, story_pos in zip(stories, stories_pos):
             screen.blit(story, story_pos)
         # Renders the fps counter:
-        if settings.display_fps:
-            fps = str(int(game_clock.get_fps()))
-            fps = font3.render(
-                "{} fps. Press Esc to quit.".format(fps), 1, grey_text_colour)
-            fps_pos = fps.get_rect(left=0, bottom=height)
+        if settings.display_framerate:
+            fps, fps_pos = get_framerate(font, colour, game_clock)
             screen.blit(fps, fps_pos)
+        # Renders the total display:
         pygame.display.flip()
 
 
