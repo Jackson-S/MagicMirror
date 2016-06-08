@@ -177,7 +177,7 @@ def get_weather_display(font, colour):
 
 
 def get_news_display(font, colour):
-    '''returns updated text'''
+    '''returns news text and rects'''
     width, height = settings.resolution
     subs = settings.subreddits
     sub_offset, news, stories, stories_pos = -10, [], [], []
@@ -189,9 +189,25 @@ def get_news_display(font, colour):
         stories_pos.append(stories[-1].get_rect(left=width/3.6, top=sub_offset))
         sub_offset += int((34/600)*settings.resolution[1])
         for story in news:
-            stories.append(font[3].render(truncate(story), 1, colour[2]))
-            stories_pos.append(stories[-1].get_rect(left=width/3.41, top=(sub_offset)))
+            stories.append(font[3].render(story, 1, colour[2]))
+            stories_pos.append(stories[-1].get_rect(
+                left=width/3.41, top=sub_offset))
+            story_right_edge = (stories_pos[-1][2] + width / 3.41)
+            # Check if the news item is wider than the screen edge:
+            if story_right_edge > width - width / 40:
+                cuts = 0
+                # Repeatedly truncate() the text until it fits:
+                while story_right_edge > width - width / 40:
+                    stories[-1] = font[3].render(
+                        truncate(story, length=(len(story)-cuts)), 1, colour[2])
+                    stories_pos[-1] = stories[-1].get_rect(
+                        left=width/3.41, top=sub_offset)
+                    story_right_edge = (stories_pos[-1][2] + width / 3.41)
+                    cuts += 1
             sub_offset += int((26/600)*height)
+            # Check if the next news item will run off the screen:
+            if sub_offset >= height-(26/600)*height+1:
+                break
     return (stories, stories_pos)
 
 
@@ -208,12 +224,13 @@ def get_display_mode():
         return translations.modes[settings.def_disp_mode]
 
 
-def get_framerate(font, colour, clock):
+def get_framerate(font, clock):
+    '''Returns framerate font item and rect item'''
     fps = font[3].render(
         "{} fps. Press Esc to quit.".format(
-            str(int(clock.get_fps()))), 1, colour[1]
+            int(clock.get_fps())), 1, translations.colour[1]
         )
-    fps_pos = fps.get_rect(left=5, bottom=settings.resolution[1])
+    fps_pos = fps.get_rect(left=0, bottom=settings.resolution[1])
     return (fps, fps_pos)
 
 
@@ -238,8 +255,8 @@ def main():
     #  - Icons to text (using OW font)
     #  - Automatic on/off based on motion/light sensor
 
-    refresh, last_refresh_time = True, 0
     pygame.init()
+    refresh, last_refresh_time = True, 0
     # Resoltion, hardcoded, don't change, will probably break things:
     width, height = settings.resolution
     # Initialise the fonts and colours from translations.py:
@@ -280,7 +297,7 @@ def main():
             screen.blit(story, story_pos)
         # Renders the fps counter:
         if settings.display_framerate is True:
-            fps, fps_pos = get_framerate(font, colour, game_clock)
+            fps, fps_pos = get_framerate(font, game_clock)
             screen.blit(fps, fps_pos)
         # Renders the total display:
         pygame.display.flip()

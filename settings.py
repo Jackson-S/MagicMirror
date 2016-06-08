@@ -1,6 +1,5 @@
 '''UI Settings'''
 version = "0.1"
-delay_before_close = 60
 # 16:9 (or close to) resolutions only at the moment.
 resolution = (1024, 600)
 fps_limit = 0
