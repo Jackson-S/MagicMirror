@@ -19,7 +19,7 @@ saved_weather_data_path = "resources/weather_data"
 
 '''News Settings'''
 # User agent string for praw:
-user_agent = "{}:com.personalproject.magicmirror:{} (by /u/plainchips)"
+user_agent = "{}:MagicMirror/Jackson-S/com.github:{} (by /u/plainchips)"
 # Items to display for each subreddit:
 item_count = 6
 # Subreddits to fetch data from

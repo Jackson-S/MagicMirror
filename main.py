@@ -252,9 +252,8 @@ def main():
     '''
 
     # Planned features:
-    #  - Auto-refresh (Started)
+    #  - Auto-refresh (Works, but UI not implemented yet)
     #  - Multiple weather sources
-    #  - Font options
     #  - Icons to text (using OW font)
     #  - Automatic on/off based on motion/light sensor
 
