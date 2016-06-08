@@ -143,12 +143,15 @@ def get_news(sub, limit=settings.item_count):
     return result
 
 
-def truncate(text, title=False, length=65, suffix="..."):
+def truncate(text, title=False, length=100, suffix="..."):
     '''truncate(text, title: bool, length: int, suffix: str) -> unicode'''
     if title:
         text = text.title()
     if len(text) <= length:
-        return unicode(text)
+        if (text[-1] != "?" or "." or "!" or ":") and not title:
+            return unicode(text + ".")
+        else:
+            return unicode(text)
     else:
         return unicode(' '.join(text[:length+1].split(' ')[0:-1]) + suffix)
 
@@ -164,7 +167,7 @@ def get_weather_display(font, colour):
         pygame.transform.smoothscale(pygame.image.load("resources/{}".format(
             weather_info[3])), (int(width/4.21), int(width/4.21))),
         font[1].render(weather_info[0], 1, colour[2]),
-        font[2].render("{}\xb0C".format(weather_info[1]), 1, colour[2]),
+        font[2].render("{}\xb0c".format(weather_info[1]), 1, colour[2]),
         font[3].render(str(weather_info[2]), 1, colour[2])
         )
     weather_text_pos = (
@@ -185,11 +188,11 @@ def get_news_display(font, colour):
         news = []
         news.extend(get_news(sub))
         sub_offset += int((10/600)*height)
-        stories.append(font[4].render(truncate(sub, True), 1, colour[2]))
+        stories.append(font[4].render(truncate(sub, title=True), 1, colour[2]))
         stories_pos.append(stories[-1].get_rect(left=width/3.6, top=sub_offset))
         sub_offset += int((34/600)*settings.resolution[1])
         for story in news:
-            stories.append(font[3].render(story, 1, colour[2]))
+            stories.append(font[3].render(truncate(story), 1, colour[2]))
             stories_pos.append(stories[-1].get_rect(
                 left=width/3.41, top=sub_offset))
             story_right_edge = (stories_pos[-1][2] + width / 3.41)
