@@ -1,5 +1,7 @@
 ##**Magic Mirror**
 
+Format: ![Screenshot](/screenshot.png)
+
 Supports weather data from the Australian Bureau of Meteorology and news from Reddit.
 
 ####Requirements:

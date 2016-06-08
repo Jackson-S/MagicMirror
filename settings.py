@@ -1,7 +1,7 @@
 '''UI Settings'''
 version = "0.1"
 # 16:9 (or close to) resolutions only at the moment.
-resolution = (1024, 600)
+resolution = (1024,600)
 fps_limit = 0
 def_disp_mode = "--window"
 display_framerate = True
@@ -21,6 +21,6 @@ saved_weather_data_path = "resources/weather_data"
 # User agent string for praw:
 user_agent = "{}:MagicMirror/Jackson-S/com.github:{} (by /u/plainchips)"
 # Items to display for each subreddit:
-item_count = 6
+item_count = 10
 # Subreddits to fetch data from
-subreddits = ["worldnews", "australia", "sydney"]
+subreddits = ["news", "worldnews"]
