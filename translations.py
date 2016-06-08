@@ -1,5 +1,7 @@
+# -*- coding: UTF-8 -*-
 from settings import resolution
 conditions = ["sun",
+              "clear",
               "cloud",
               "rain",
               "heavy rain",
@@ -15,21 +17,22 @@ conditions = ["sun",
               "light showers",
               "tornado"]
 
-translation = {"sun": "sun",
-               "cloud": "cloud",
-               "rain": "rain",
-               "heavy rain": "heavy_rain",
-               "shower": "rain",
-               "storm": "storm",
-               "thunder": "storm",
-               "lightning": "storm",
-               "hail": "hail",
-               "snow": "snow",
-               "cyclone": "tornado",
-               "wind": "wind",
-               "partly cloudy": "cloud",
-               "light showers": "rain",
-               "tornado": "tornado"}
+translation = {"sun": u"",
+               "clear": u"",
+               "cloud": u"",
+               "rain": u"",
+               "heavy rain": u"",
+               "shower": u"",
+               "storm": u"",
+               "thunder": u"",
+               "lightning": u"",
+               "hail": u"",
+               "snow": u"",
+               "cyclone": u"",
+               "wind": u"",
+               "partly cloudy": u"",
+               "light showers": u"",
+               "tornado": u""}
 
 # Magic numbers from pygame.MODE settings
 modes = {"--fullscreen": -2147483648,
@@ -61,7 +64,8 @@ fonts = [
         ("resources/font/font-heavy.ttf", int(0.086*resolution[1])),
         ("resources/font/font-heavy.ttf", int(0.067*resolution[1])),
         ("resources/font/font-light.ttf", int(0.037*resolution[1])),
-        ("resources/font/font-regular.ttf", int(0.05*resolution[1]))
+        ("resources/font/font-regular.ttf", int(0.05*resolution[1])),
+        ("resources/font/weather-icons.ttf", int(0.25*resolution[1]))
         ]
 
 disp_err_str = '''Unknown mode {}, using default of "{}"

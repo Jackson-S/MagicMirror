@@ -120,13 +120,13 @@ def parse_weather_info(city, data):
     # predefined dictionary (located in weather settings), which
     # contains the appropriate icon for the found descriptor
     if len(condition) != 0:
-        condition = "{}.png".format(translations.translation[condition[0]])
+        condition = translations.translation[condition[0]]
 
     # If the description doesn't contain relevant info then use
     # a gigantic question mark picture because again, no single
     # word weather info is supplied.
     else:
-        condition = "unknown.png"
+        condition = u""
     temperature, description = result[-2], result[-1].title()
 
     return (city, temperature, description, condition)
@@ -143,7 +143,7 @@ def get_news(sub, limit=settings.item_count):
     return result
 
 
-def truncate(text, title=False, length=100, suffix="..."):
+def truncate(text, title=False, length=100):
     '''truncate(text, title: bool, length: int, suffix: str) -> unicode'''
     if title:
         text = text.title()
@@ -153,7 +153,7 @@ def truncate(text, title=False, length=100, suffix="..."):
         else:
             return unicode(text)
     else:
-        return unicode(' '.join(text[:length+1].split(' ')[0:-1]) + suffix)
+        return unicode(" ".join(text[:length+1].split(" ")[:-1]) + "...")
 
 
 def get_weather_display(font, colour):
@@ -164,15 +164,14 @@ def get_weather_display(font, colour):
     # Sets text for weather info, (text, antialiasing, colour, [background]):
     # city_text, temp_text, condition_text, weather_icon then positions
     weather_text = (
-        pygame.transform.smoothscale(pygame.image.load("resources/{}".format(
-            weather_info[3])), (int(width/4.21), int(width/4.21))),
+        font[5].render(weather_info[3], 1, colour[2]),
         font[1].render(weather_info[0], 1, colour[2]),
         font[2].render("{}\xb0c".format(weather_info[1]), 1, colour[2]),
         font[3].render(str(weather_info[2]), 1, colour[2])
         )
     weather_text_pos = (
-        weather_text[0].get_rect(left=1, top=1),
-        weather_text[1].get_rect(left=1, top=1),
+        weather_text[0].get_rect(left=width/100, top=height/500),
+        weather_text[1].get_rect(left=1, top=width*-0.008),
         weather_text[2].get_rect(right=width/4.1, top=height/3.53),
         weather_text[3].get_rect(right=width/4.1, top=height/2.73)
         )
