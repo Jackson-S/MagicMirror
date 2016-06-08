@@ -1,3 +1,4 @@
+from settings import resolution
 conditions = ["sun",
               "cloud",
               "rain",
@@ -24,11 +25,11 @@ translation = {"sun": "sun",
                "lightning": "storm",
                "hail": "hail",
                "snow": "snow",
-               "cyclone": "cyclone",
+               "cyclone": "tornado",
                "wind": "wind",
                "partly cloudy": "cloud",
                "light showers": "rain",
-               "tornado": "cyclone"}
+               "tornado": "tornado"}
 
 # Magic numbers from pygame.MODE settings
 modes = {"--fullscreen": -2147483648,
@@ -48,12 +49,14 @@ colour = [
 
 # Sets font options and sizes, TTF fonts only:
 fonts = [
-        ("resources/font.ttf", 80),
-        ("resources/font.ttf", 52),
-        ("resources/font.ttf", 40),
-        ("resources/font.ttf", 22),
-        ("resources/font.ttf", 30)
+        ("resources/font.ttf", int(0.14*resolution[1])),
+        ("resources/font.ttf", int(0.086*resolution[1])),
+        ("resources/font.ttf", int(0.067*resolution[1])),
+        ("resources/font.ttf", int(0.037*resolution[1])),
+        ("resources/font.ttf", int(0.05*resolution[1]))
         ]
 
 disp_err_str = '''Unknown mode {}, using default of "{}"
 supported modes are fullscreen, doublebuffered, noframe and window'''
+
+loading_text = "Loading..."

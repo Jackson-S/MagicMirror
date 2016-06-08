@@ -10,8 +10,9 @@
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 from __future__ import print_function, division
-from urllib2 import Request, urlopen
+from urllib2 import Request, urlopen, URLError
 from sys import argv
+from os import remove
 from platform import system
 
 import time
@@ -36,12 +37,12 @@ def fetch_weather_info():
 
     # Planned features:
     #  - Ability to use multiple services
-    #  - Change save file location
 
+    save_path = settings.saved_weather_data_path
     try:
-        with open("resources/weather_data", "r") as save_data:
+        with open(save_path, "r") as save_data:
             # Get elapsed time since update and check against update delay:
-            time_since_check = time.time() - float(save_data.readline())
+            time_since_check = time.time() - int(save_data.readline())
             if time_since_check > settings.weather_update_delay:
                 # Raises to trigger data update in except clause:
                 raise IOError
@@ -52,10 +53,21 @@ def fetch_weather_info():
     except IOError:
         # Fetch data from a URL and save it to weather_data,
         # then call self:
-        with open("resources/weather_data", "w") as save_data:
-            current_time = str(time.time())
-            bom_data = str(urlopen(Request(settings.weather_url)).read())
+        with open(save_path, "w") as save_data:
+            current_time = str(int(time.time()))
+            try:
+                bom_data = str(urlopen(Request(settings.weather_url)).read())
+            except URLError:
+                print("No network connection.")
+                save_data.close()
+                remove(save_path)
+                pygame.quit()
+                quit()
             save_data.write("{}\n{}".format(current_time, bom_data))
+        return fetch_weather_info()
+    except ValueError:
+        print("Error in file, deleting and retrying download.")
+        remove(save_path)
         return fetch_weather_info()
     # Return resulting weather data after parsing:
     return parse_weather_info(settings.weather_city, result)
@@ -143,43 +155,43 @@ def truncate(text, title=False, length=65, suffix="..."):
 
 def get_weather_display(font, colour):
     '''returns the imagery and text for the weather display'''
-    city = settings.weather_city
+    width, height = settings.resolution
     # fetches data for weather info:
     weather_info = fetch_weather_info()
     # Sets text for weather info, (text, antialiasing, colour, [background]):
     # city_text, temp_text, condition_text, weather_icon then positions
     weather_text = (
         pygame.transform.smoothscale(pygame.image.load("resources/{}".format(
-            weather_info[3])), (int(settings.resolution[0]/4.21),
-                                int(settings.resolution[1]/2.37))),
+            weather_info[3])), (int(width/4.21), int(width/4.21))),
         font[1].render(weather_info[0], 1, colour[2]),
         font[2].render("{}\xb0C".format(weather_info[1]), 1, colour[2]),
         font[3].render(str(weather_info[2]), 1, colour[2])
         )
     weather_text_pos = (
-        weather_text[0].get_rect(left=20, top=50),
-        weather_text[1].get_rect(left=0, top=0),
-        weather_text[2].get_rect(right=250, top=170),
-        weather_text[3].get_rect(right=250, top=220)
-    )
+        weather_text[0].get_rect(left=1, top=1),
+        weather_text[1].get_rect(left=1, top=1),
+        weather_text[2].get_rect(right=width/4.1, top=height/3.53),
+        weather_text[3].get_rect(right=width/4.1, top=height/2.73)
+        )
     return (weather_text, weather_text_pos)
 
 
 def get_news_display(font, colour):
     '''returns updated text'''
+    width, height = settings.resolution
     subs = settings.subreddits
     sub_offset, news, stories, stories_pos = -10, [], [], []
     for sub in subs:
         news = []
         news.extend(get_news(sub))
-        sub_offset += 10
+        sub_offset += int((10/600)*height)
         stories.append(font[4].render(truncate(sub, True), 1, colour[2]))
-        stories_pos.append(stories[-1].get_rect(left=285, top=sub_offset))
-        sub_offset += 34
+        stories_pos.append(stories[-1].get_rect(left=width/3.6, top=sub_offset))
+        sub_offset += int((34/600)*settings.resolution[1])
         for story in news:
             stories.append(font[3].render(truncate(story), 1, colour[2]))
-            stories_pos.append(stories[-1].get_rect(left=300, top=(sub_offset)))
-            sub_offset += 26
+            stories_pos.append(stories[-1].get_rect(left=width/3.41, top=(sub_offset)))
+            sub_offset += int((26/600)*height)
     return (stories, stories_pos)
 
 
@@ -206,9 +218,10 @@ def get_framerate(font, colour, clock):
 
 
 def check_events(events):
-    # Checks for keyboard events and quits if necessary:
+    '''Checks for keyboard events and quits if necessary'''
     for event in events:
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+        # 2 = pygame.KEYDOWN, 27 = pygame.K_ESCAPE
+        if event.type == 2 and event.key == 27:
             pygame.quit()
             quit()
 
@@ -219,10 +232,8 @@ def main():
     '''
 
     # Planned features:
-    #  - Auto-refresh
-    #  - News
+    #  - Auto-refresh (Started)
     #  - Multiple weather sources
-    #  - Resolution independence (maybe)
     #  - Font options
     #  - Icons to text (using OW font)
     #  - Automatic on/off based on motion/light sensor
@@ -240,7 +251,7 @@ def main():
     screen = pygame.display.set_mode((width, height), get_display_mode())
     pygame.mouse.set_visible(settings.mouse_visible)
     screen.fill(colour[0])
-    load_str = font[0].render("Loading...", 1, colour[2])
+    load_str = font[0].render(translations.loading_text, 1, colour[2])
     screen.blit(load_str, load_str.get_rect(centerx=width/2, centery=height/2))
     pygame.display.flip()
     while True:
