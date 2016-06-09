@@ -197,7 +197,7 @@ def get_alt_news_display():
         news.extend(get_news(sub))
         sub_offset += int(HEIGHT*0.017)
         stories.append(FONT[4].render(truncate(sub, title=True), 1, COLOUR[2]))
-        stories_pos.append(stories[-1].get_rect(left=WIDTH * 0.27, top=sub_offset))
+        stories_pos.append(stories[-1].get_rect(left=WIDTH*0.27, top=sub_offset))
         sub_offset += int(HEIGHT*0.057)
         for story in news:
             stories.append(FONT[3].render(truncate(story), 1, COLOUR[2]))
@@ -266,7 +266,7 @@ def main(screen):
     # Initialises the display
     # Enables clock, used for frame rate limiter:
     game_clock = pygame.time.Clock()
-    pygame.mouse.set_visible(settings.mouse_visible)
+    pygame.mouse.set_visible(MOUSE_VISIBLE)
     screen.fill(COLOUR[0])
     load_str = FONT[0].render(translations.loading_text, 1, COLOUR[2])
     screen.blit(load_str, load_str.get_rect(centerx=WIDTH/2, centery=HEIGHT/2))
@@ -274,8 +274,8 @@ def main(screen):
     while True:
         time_since_refresh = int(time.time() - last_refresh_time)
         # Sets the framerate (located in settings.py), 0 = no limit:
-        if settings.fps_limit > 0 or refresh is True:
-            game_clock.tick(settings.fps_limit)
+        if FPS_LIMIT > 0 or refresh is True:
+            game_clock.tick(FPS_LIMIT)
         else:
             game_clock.tick()
         # Checks to see if the information needs to be refreshed:
@@ -317,12 +317,23 @@ def main(screen):
 
 if __name__ == '__main__':
     pygame.init()
-    if settings.autodetect_resolution is False:
+    # Mode specifically for my personal setup. Feel free to ignore it/remove it:
+    if len(argv) > 1:
+        if argv[1] == "--pi":
+            RESOLUTION = WIDTH, HEIGHT = (1024, 600)
+            SCREEN = pygame.display.set_mode((1024, 600), pygame.FULLSCREEN)
+            FPS_LIMIT = 1
+            MOUSE_VISIBLE = False
+    elif settings.autodetect_resolution is False:
         RESOLUTION = WIDTH, HEIGHT = settings.resolution
         SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
+        FPS_LIMIT = settings.fps_limit
+        MOUSE_VISIBLE = settings.mouse_visible
     else:
         SCREEN = pygame.display.set_mode((0, 0), get_display_mode())
         RESOLUTION = WIDTH, HEIGHT = SCREEN.get_width(), SCREEN.get_height()
+        FPS_LIMIT = settings.fps_limit
+        MOUSE_VISIBLE = settings.mouse_visible
     # Initialise the fonts and colours from translations.py:
     if settings.invert_colours:
         COLOUR = [(255, 255, 255), (0, 0, 0), (0, 0, 0)]

@@ -93,3 +93,5 @@ ENV/
 
 # Program settings
 weather_data
+autorun.sh
+log.txt
