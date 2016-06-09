@@ -9,6 +9,9 @@ if int(py_ver[0]) >= 3:
     from urllib.request import Request, urlopen, URLError
 else:
     from urllib2 import Request, urlopen, URLError
+    def FileNotFoundError():
+        '''hacky python 3 compatability fix'''
+        pass
 
 import time
 import pygame
@@ -292,13 +295,13 @@ def main():
     refresh, last_refresh_time = True, 0
     # Resoltion, hardcoded, don't change, will probably break things:
     width, height = settings.resolution
+    # Initialises the display
+    screen = pygame.display.set_mode((width, height), get_display_mode())
     # Initialise the fonts and colours from translations.py:
     colour = translations.colour
     font = [pygame.font.Font(ttf, size) for ttf, size in translations.fonts]
     # Enables clock, used for frame rate limiter:
     game_clock = pygame.time.Clock()
-    # Initialises the display
-    screen = pygame.display.set_mode((width, height), get_display_mode())
     pygame.mouse.set_visible(settings.mouse_visible)
     screen.fill(colour[0])
     load_str = font[0].render(translations.loading_text, 1, colour[2])

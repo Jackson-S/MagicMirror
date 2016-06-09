@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 from settings import resolution
+import pygame 
 conditions = [
               "sun",
               "clear",
@@ -42,12 +43,12 @@ translation = {
 
 # Magic numbers from pygame.MODE settings
 modes = {
-         "--fullscreen": -2147483648,
-         "--hwacceleration": 1,
-         "--hwfullscreen": -2147483647,
-         "--doublebuffered": 1073741824,
-         "--noframe": 32,
-         "--window": 0
+         "--fullscreen": pygame.FULLSCREEN,
+         "--hwacceleration": pygame.DOUBLEBUF | pygame.HWSURFACE,
+         "--hwfullscreen": pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.FULLSCREEN,
+         "--doublebuffered": pygame.DOUBLEBUF,
+         "--noframe": pygame.NOFRAME,
+         "--window": 0,
          }
 
 # Sets the colour pallete for the program:

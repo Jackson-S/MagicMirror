@@ -4,7 +4,7 @@ version = "0.2"
 resolution = (1920, 1080)
 fps_limit = 0
 def_disp_mode = "--window"
-display_framerate = False
+display_framerate = True
 mouse_visible = False
 update_delay = 1800
 
