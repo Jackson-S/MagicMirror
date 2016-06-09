@@ -1,15 +1,17 @@
 '''UI Settings'''
-
 version = "0.2"
 
 # 16:9 (or close to) resolutions only at the moment.
-resolution = (1920, 1080)
+resolution = (2560, 1600)
 
 # Framerate limit, 0 for unlimited:
 fps_limit = 5
 
+# True = black on white, False = white on black
+invert_colours = False
+
 # Display framerate in corner:
-display_framerate = True
+display_framerate = False
 
 # Default display mode:
 def_disp_mode = "--fullscreen"
@@ -41,7 +43,6 @@ fonts = [
         ]
 
 '''Weather Settings'''
-
 # URL for bom weather data. Do not touch:
 weather_url = "ftp://ftp2.bom.gov.au/anon/gen/fwo/IDA00100.dat"
 
@@ -54,12 +55,11 @@ weather_update_delay = 3600
 saved_weather_data_path = "resources/weather_data"
 
 '''News Settings'''
-
 # Items to display for each subreddit:
 item_count = 10
 
 # Subreddits to fetch data from:
-subreddits = ["Australia", "Worldnews"]
+subreddits = ["News"]
 
 # Changed to a fade-in/out bottom feed.
 # To get original list behaviour set to false:

@@ -141,21 +141,27 @@ def get_weather_display():
     # Sets text for weather info, (text, antialiasing, colour, [background]):
     # city_text, temp_text, condition_text, weather_icon then positions
     weather_text = (
-        FONT[5].render(weather_info[3][0], 1, COLOUR[2]),
         FONT[1].render(weather_info[0], 1, COLOUR[2]),
+        FONT[5].render(weather_info[3][0], 1, COLOUR[2]),
+        FONT[3].render(str(weather_info[2]), 1, COLOUR[2]),
         FONT[2].render("{}\xb0c".format(weather_info[1]), 1, COLOUR[2]),
-        FONT[3].render(str(weather_info[2]), 1, COLOUR[2])
+        )
+    heights = (
+        weather_text[0].get_rect(left=0, top=0)[3],
+        weather_text[1].get_rect(left=0, top=0)[3],
+        weather_text[2].get_rect(left=0, top=0)[3],
+        weather_text[3].get_rect(left=0, top=0)[3]
         )
     weather_text_pos = (
-        weather_text[0].get_rect(left=WIDTH/100, top=weather_info[3][1]),
-        weather_text[1].get_rect(left=1, top=HEIGHT*-0.008),
-        weather_text[2].get_rect(right=WIDTH/4.5, top=HEIGHT/3.50),
-        weather_text[3].get_rect(right=WIDTH/4.5, top=HEIGHT/2.70)
+        weather_text[0].get_rect(left=WIDTH/100, top=0),
+        weather_text[1].get_rect(left=WIDTH/100, top=heights[0]),
+        weather_text[2].get_rect(left=WIDTH/100, top=sum(heights[0:2])),
+        weather_text[3].get_rect(left=WIDTH/100, top=sum(heights[0:3]))
         )
     return (weather_text, weather_text_pos)
 
 
-def get_alt_news_display():
+def get_news_display():
     '''returns news text and rects'''
     subs = settings.subreddits
     news, stories, stories_pos, subreddit, subreddit_pos = [], [], [], [], []
@@ -163,10 +169,10 @@ def get_alt_news_display():
         news = []
         news.extend(get_news(sub))
         for story in news:
-            subreddit.append(FONT[6].render(truncate(sub, title=True), 1, COLOUR[2]))
-            subreddit_pos.append(subreddit[-1].get_rect(left=0, bottom=HEIGHT*0.95))
             stories.append(FONT[7].render(truncate(story), 1, COLOUR[2]))
-            stories_pos.append(stories[-1].get_rect(left=10, bottom=HEIGHT))
+            stories_pos.append(stories[-1].get_rect(left=WIDTH/100, bottom=HEIGHT-HEIGHT/200))
+            subreddit.append(FONT[6].render(truncate(sub, title=True), 1, COLOUR[2]))
+            subreddit_pos.append(subreddit[-1].get_rect(left=WIDTH/100, bottom=HEIGHT-stories_pos[-1][3]*0.8))
             story_right_edge = stories_pos[-1][2]
             # Check if the news item is wider than the screen edge:
             if story_right_edge > WIDTH:
@@ -175,13 +181,13 @@ def get_alt_news_display():
                 while story_right_edge > WIDTH:
                     stories[-1] = FONT[7].render(
                         truncate(story, length=len(story)-cuts), 1, COLOUR[2])
-                    stories_pos[-1] = stories[-1].get_rect(left=0, bottom=HEIGHT)
+                    stories_pos[-1] = stories[-1].get_rect(left=WIDTH/100, bottom=HEIGHT-HEIGHT/200)
                     story_right_edge = (stories_pos[-1][2] + 10)
                     cuts += 1
     return (subreddit, subreddit_pos, stories, stories_pos)
 
 
-def get_news_display():
+def get_alt_news_display():
     '''returns news text and rects'''
     subs = settings.subreddits
     sub_offset, news, stories, stories_pos = -10, [], [], []
@@ -232,7 +238,7 @@ def get_framerate(clock):
     '''Returns framerate font item and rect item'''
     fps = FONT[3].render("{} fps. Press Esc to quit.".format(
             int(ceil(clock.get_fps()))), 1, COLOUR[1])
-    fps_pos = fps.get_rect(right=WIDTH, top=0)
+    fps_pos = fps.get_rect(right=WIDTH-WIDTH/100, top=0)
     return (fps, fps_pos)
 
 
@@ -276,10 +282,10 @@ def main(screen):
             # Fetch the weather and news:
             weather, weather_pos = get_weather_display()
             if settings.bottom_feed:
-                sub, sub_pos, story, story_pos = get_alt_news_display()
+                sub, sub_pos, story, story_pos = get_news_display()
                 story_number, story_disp_time = 0, time.time()
             else:
-                story, story_pos = get_news_display()
+                story, story_pos = get_alt_news_display()
             refresh, last_refresh_time = False, int(time.time())
         # Checks for keyboard events (quit), no return:
         check_events(pygame.event.get())
@@ -313,6 +319,9 @@ if __name__ == '__main__':
     RESOLUTION = WIDTH, HEIGHT = settings.resolution
     SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
     # Initialise the fonts and colours from translations.py:
-    COLOUR = [(0, 0, 0), (128, 128, 128), (255, 255, 255)]
+    if settings.invert_colours:
+        COLOUR = [(255, 255, 255), (0, 0, 0), (0, 0, 0)]
+    else:
+        COLOUR = [(0, 0, 0), (128, 128, 128), (255, 255, 255)]
     FONT = [pygame.font.Font(ttf, size) for ttf, size in settings.fonts]
     main(SCREEN)
