@@ -1,6 +1,8 @@
 '''UI Settings'''
 version = "0.2"
 
+autodetect_resolution = True
+
 # 16:9 (or close to) resolutions only at the moment.
 resolution = (2560, 1600)
 
@@ -8,7 +10,7 @@ resolution = (2560, 1600)
 fps_limit = 5
 
 # True = black on white, False = white on black
-invert_colours = False
+invert_colours = True
 
 # Display framerate in corner:
 display_framerate = False

@@ -30,6 +30,7 @@ modes = {
          "--doublebuffered": pygame.DOUBLEBUF,
          "--noframe": pygame.NOFRAME,
          "--window": 0,
+         "--opengl": pygame.OPENGL | pygame.OPENGLBLIT
          }
 
 disp_err_str = '''Unknown mode {}, using default of "{}"
