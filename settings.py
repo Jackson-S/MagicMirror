@@ -26,7 +26,8 @@ mouse_visible = False
 # or a multiple of this:
 update_delay = 1800
 
-# Sets font options and sizes, TTF fonts only:
+# Sets font options and sizes, TTF fonts only, number is scale factor (multlied
+# with resolution height):
 # 0 = Loading font,
 # 1 = City font,
 # 2 = Temperature title,
@@ -34,14 +35,14 @@ update_delay = 1800
 # 4 = Subreddit heading,
 # 5 = Weather icon font
 fonts = [
-        ("resources/font-heavy.ttf", int(0.14*resolution[1])),
-        ("resources/font-heavy.ttf", int(0.086*resolution[1])),
-        ("resources/font-heavy.ttf", int(0.067*resolution[1])),
-        ("resources/font-light.ttf", int(0.037*resolution[1])),
-        ("resources/font-regular.ttf", int(0.05*resolution[1])),
-        ("resources/weather-icons.ttf", int(0.25*resolution[1])),
-        ("resources/font-regular.ttf", int(0.08*resolution[1])),
-        ("resources/font-light.ttf", int(0.047*resolution[1]))
+        ("resources/font-heavy.ttf", 0.14),
+        ("resources/font-heavy.ttf", 0.086),
+        ("resources/font-heavy.ttf", 0.067),
+        ("resources/font-light.ttf", 0.037),
+        ("resources/font-regular.ttf", 0.05),
+        ("resources/weather-icons.ttf", 0.25),
+        ("resources/font-regular.ttf", 0.08),
+        ("resources/font-light.ttf", 0.047)
         ]
 
 '''Weather Settings'''

@@ -321,12 +321,12 @@ if __name__ == '__main__':
         SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
     else:
         SCREEN = pygame.display.set_mode((0, 0), get_display_mode())
-        RESOLUTION = WIDTH, HEIGHT = SCREEN.get_size()
+        RESOLUTION = WIDTH, HEIGHT = SCREEN.get_width(), SCREEN.get_height()
         print(SCREEN.get_size())
     # Initialise the fonts and colours from translations.py:
     if settings.invert_colours:
         COLOUR = [(255, 255, 255), (0, 0, 0), (0, 0, 0)]
     else:
         COLOUR = [(0, 0, 0), (128, 128, 128), (255, 255, 255)]
-    FONT = [pygame.font.Font(ttf, size) for ttf, size in settings.fonts]
+    FONT = [pygame.font.Font(ttf, int(size*HEIGHT)) for ttf, size in settings.fonts]
     main(SCREEN)
