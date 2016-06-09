@@ -38,16 +38,16 @@ def timestamp(activity):
             except AttributeError:
                 pass
             try:
-            print("PYGAME={}, BACKEND={}".format(
-                pygame.vernum, pygame.display.get_driver()))
+                print("PYGAME={}, BACKEND={}".format(
+                    pygame.vernum, pygame.display.get_driver()))
             except AttributeError:
                 pass
             try:
-            print("PYTHON={}".format(pyver))
+                print("PYTHON={}".format(pyver))
             except AttributeError:
                 pass
             try:
-            print("VIDEO={}".format(pygame.display.Info()))
+                print("VIDEO={}".format(pygame.display.Info()))
             except AttributeError:
                 pass
             try:
