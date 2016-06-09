@@ -16,6 +16,7 @@ from __future__ import unicode_literals
 from sys import argv
 from os import remove
 from platform import system
+from math import ceil
 import time
 try:
     from urllib.request import Request, urlopen, URLError
@@ -230,7 +231,7 @@ def get_display_mode():
 def get_framerate(clock):
     '''Returns framerate font item and rect item'''
     fps = FONT[3].render("{} fps. Press Esc to quit.".format(
-            int(clock.get_fps())), 1, COLOUR[1])
+            int(ceil(clock.get_fps()))), 1, COLOUR[1])
     fps_pos = fps.get_rect(right=WIDTH, top=0)
     return (fps, fps_pos)
 
