@@ -164,18 +164,46 @@ def get_weather_display(font, colour):
     # Sets text for weather info, (text, antialiasing, colour, [background]):
     # city_text, temp_text, condition_text, weather_icon then positions
     weather_text = (
-        font[5].render(weather_info[3], 1, colour[2]),
+        font[5].render(weather_info[3][0], 1, colour[2]),
         font[1].render(weather_info[0], 1, colour[2]),
         font[2].render("{}\xb0c".format(weather_info[1]), 1, colour[2]),
         font[3].render(str(weather_info[2]), 1, colour[2])
         )
     weather_text_pos = (
-        weather_text[0].get_rect(left=width/100, top=height/500),
+        weather_text[0].get_rect(left=width/100, top=weather_info[3][1]),
         weather_text[1].get_rect(left=1, top=width*-0.008),
-        weather_text[2].get_rect(right=width/4.1, top=height/3.53),
-        weather_text[3].get_rect(right=width/4.1, top=height/2.73)
+        weather_text[2].get_rect(right=width/4.5, top=height/3.50),
+        weather_text[3].get_rect(right=width/4.5, top=height/2.70)
         )
     return (weather_text, weather_text_pos)
+
+
+def get_alt_news_display(font, colour):
+    '''returns news text and rects'''
+    width, height = settings.resolution
+    subs = settings.subreddits
+    news, stories, stories_pos, subreddit, subreddit_pos = [], [], [], [], []
+    for sub in subs:
+        news = []
+        news.extend(get_news(sub))
+        for story in news:
+            subreddit.append(font[4].render(truncate(sub, title=True), 1, colour[2]))
+            subreddit_pos.append(subreddit[-1].get_rect(left=0, bottom=height*0.95))
+            stories.append(font[3].render(truncate(story), 1, colour[2]))
+            stories_pos.append(stories[-1].get_rect(
+                left=10, bottom=height))
+            story_right_edge = stories_pos[-1][2]
+            # Check if the news item is wider than the screen edge:
+            if story_right_edge > width:
+                cuts = 0
+                # Repeatedly truncate() the text until it fits:
+                while story_right_edge > width:
+                    stories[-1] = font[3].render(
+                        truncate(story, length=len(story)-cuts), 1, colour[2])
+                    stories_pos[-1] = stories[-1].get_rect(left=0, bottom=height)
+                    story_right_edge = (stories_pos[-1][2] + 10)
+                    cuts += 1
+    return (subreddit, subreddit_pos, stories, stories_pos)
 
 
 def get_news_display(font, colour):
@@ -232,7 +260,7 @@ def get_framerate(font, clock):
         "{} fps. Press Esc to quit.".format(
             int(clock.get_fps())), 1, translations.colour[1]
         )
-    fps_pos = fps.get_rect(left=0, bottom=settings.resolution[1])
+    fps_pos = fps.get_rect(right=settings.resolution[0], top=0)
     return (fps, fps_pos)
 
 
@@ -251,7 +279,6 @@ def main():
     '''
 
     # Planned features:
-    #  - Auto-refresh (Works, but UI not implemented yet)
     #  - Multiple weather sources
     #  - Icons to text (using OW font)
     #  - Automatic on/off based on motion/light sensor
@@ -284,7 +311,11 @@ def main():
             # Gets the weather
             weather, weather_pos = get_weather_display(font, colour)
             # Gets the news
-            stories, stories_pos = get_news_display(font, colour)
+            if settings.bottom_feed:
+                sub, sub_pos, story, story_pos = get_alt_news_display(font, colour)
+                story_number, story_disp_time = 0, time.time()
+            else:
+                story, story_pos = get_news_display(font, colour)
             refresh = False
             last_refresh_time = int(time.time())
         # Checks for keyboard events (quit), no return:
@@ -294,8 +325,15 @@ def main():
         # Blits each element to the screen:
         for item, item_pos in zip(weather, weather_pos):
             screen.blit(item, item_pos)
-        for story, story_pos in zip(stories, stories_pos):
-            screen.blit(story, story_pos)
+        if settings.bottom_feed:
+            screen.blit(sub[story_number], sub_pos[story_number])
+            screen.blit(story[story_number], story_pos[story_number])
+            if time.time() - story_disp_time >= settings.refresh_time:
+                story_number += 1
+                story_disp_time = time.time()
+        else:
+            for item, item_pos in zip(story, story_pos):
+                screen.blit(item, item_pos)
         # Renders the fps counter:
         if settings.display_framerate is True:
             fps, fps_pos = get_framerate(font, game_clock)

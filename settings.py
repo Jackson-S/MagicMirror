@@ -1,10 +1,10 @@
 '''UI Settings'''
 version = "0.1"
 # 16:9 (or close to) resolutions only at the moment.
-resolution = (1024,600)
+resolution = (1920, 1080)
 fps_limit = 0
 def_disp_mode = "--window"
-display_framerate = True
+display_framerate = False
 mouse_visible = False
 update_delay = 1800
 
@@ -21,6 +21,10 @@ saved_weather_data_path = "resources/weather_data"
 # User agent string for praw:
 user_agent = "{}:MagicMirror/Jackson-S/com.github:{} (by /u/plainchips)"
 # Items to display for each subreddit:
-item_count = 10
+item_count = 5
 # Subreddits to fetch data from
-subreddits = ["news", "worldnews"]
+subreddits = ["Australia"]
+# Changed to a fade-in/out bottom feed.
+# To get original list behaviour set to false:
+bottom_feed = True
+refresh_time = 10

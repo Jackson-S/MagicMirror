@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 from settings import resolution
-conditions = ["sun",
+conditions = [
+              "sun",
               "clear",
               "cloud",
               "rain",
@@ -12,30 +13,36 @@ conditions = ["sun",
               "hail",
               "snow",
               "cyclone",
-              "wind"
+              "wind",
               "partly cloudy",
               "light showers",
-              "tornado"]
+              "tornado",
+              "overcast"
+              ]
 
-translation = {"sun": u"",
-               "clear": u"",
-               "cloud": u"",
-               "rain": u"",
-               "heavy rain": u"",
-               "shower": u"",
-               "storm": u"",
-               "thunder": u"",
-               "lightning": u"",
-               "hail": u"",
-               "snow": u"",
-               "cyclone": u"",
-               "wind": u"",
-               "partly cloudy": u"",
-               "light showers": u"",
-               "tornado": u""}
+translation = {
+               "sun": (u"", resolution[1]*0.047),
+               "clear": (u"", resolution[1]*0.047),
+               "cloud": (u"", 0),
+               "rain": (u"", 0),
+               "heavy rain": (u"", 0),
+               "shower": (u"", 0),
+               "storm": (u"", 0),
+               "thunder": (u"", 0),
+               "lightning": (u"", 0),
+               "hail": (u"", 0),
+               "snow": (u"", 0),
+               "cyclone": (u"", 0),
+               "wind": (u"", 0),
+               "partly cloudy": (u"", 0),
+               "light showers": (u"", 0),
+               "tornado": (u"", 0),
+               "overcast": (u"", 0)
+               }
 
 # Magic numbers from pygame.MODE settings
-modes = {"--fullscreen": -2147483648,
+modes = {
+         "--fullscreen": -2147483648,
          "--hwacceleration": 1,
          "--hwfullscreen": -2147483647,
          "--doublebuffered": 1073741824,
