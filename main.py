@@ -1,19 +1,14 @@
 #!/usr/bin/env/python
 # -*- coding: UTF-8 -*-
-
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-' Python based magic mirror application, based on pygame  '
-' library as well as Reddit and BOM weather data.         '
-' Licensed under MIT license.                             '
-'                                                         '
-'                              (c) Jackson Sommerich 2016 '
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
 from __future__ import print_function, division
-from urllib2 import Request, urlopen, URLError
 from sys import argv
 from os import remove
 from platform import system
+from sys import version as py_ver
+if int(py_ver[0]) >= 3:
+    from urllib.request import Request, urlopen, URLError
+else:
+    from urllib2 import Request, urlopen, URLError
 
 import time
 import pygame
@@ -22,6 +17,15 @@ import praw
 # Import external settings files:
 import settings
 import translations
+
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Python based magic mirror application, based on pygame  '
+' library as well as Reddit and BOM weather data.         '
+' Licensed under MIT license.                             '
+'                                                         '
+'                              (c) Jackson Sommerich 2016 '
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 
 def fetch_weather_info():
@@ -50,13 +54,14 @@ def fetch_weather_info():
                 result = str(save_data.read())
 
     # Exception if weather_data can't be opened:
-    except IOError:
+    except(IOError, FileNotFoundError):
         # Fetch data from a URL and save it to weather_data,
         # then call self:
         with open(save_path, "w") as save_data:
             current_time = str(int(time.time()))
             try:
-                bom_data = str(urlopen(Request(settings.weather_url)).read())
+                bom_data = urlopen(Request(
+                    settings.weather_url)).read().decode("utf-8")
             except URLError:
                 print("No network connection.")
                 save_data.close()
@@ -149,11 +154,11 @@ def truncate(text, title=False, length=100):
         text = text.title()
     if len(text) <= length:
         if (text[-1] != "?" or "." or "!" or ":") and not title:
-            return unicode(text + ".")
+            return u"{}{}".format(text, ".")
         else:
-            return unicode(text)
+            return u"{}".format(text)
     else:
-        return unicode(" ".join(text[:length+1].split(" ")[:-1]) + "...")
+        return u" ".join(text[:length+1].split(" ")[:-1]) + u"…"
 
 
 def get_weather_display(font, colour):
