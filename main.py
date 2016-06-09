@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env/python3
 # -*- coding: UTF-8 -*-
 
 ###########################################################
@@ -108,7 +108,6 @@ def parse_weather_info(city, data):
     '''
 
     # Planned features:
-    #  - distinguising between night and day
     #  - 7-day forecast
 
     string, result, index = "", [], data.find(city.title())
@@ -196,10 +195,14 @@ def get_news_display():
         news = []
         news.extend(get_news(sub))
         for story in news:
-            stories.append(FONT[7].render(truncate(story), 1, COLOUR[2]))
-            stories_pos.append(stories[-1].get_rect(left=WIDTH/100, bottom=HEIGHT-HEIGHT/200))
-            subreddit.append(FONT[6].render(truncate(sub, title=True), 1, COLOUR[2]))
-            subreddit_pos.append(subreddit[-1].get_rect(left=WIDTH/100, bottom=HEIGHT-stories_pos[-1][3]*0.8))
+            stories.append(FONT[7].render(
+                truncate(story), 1, COLOUR[2]))
+            stories_pos.append(stories[-1].get_rect(
+                left=WIDTH/100, bottom=HEIGHT-HEIGHT/200))
+            subreddit.append(FONT[6].render(
+                truncate(sub, title=True), 1, COLOUR[2]))
+            subreddit_pos.append(subreddit[-1].get_rect(
+                left=WIDTH/100, bottom=HEIGHT-stories_pos[-1][3]*0.8))
             story_right_edge = stories_pos[-1][2]
             # Check if the news item is wider than the screen edge:
             if story_right_edge > WIDTH:
@@ -208,7 +211,8 @@ def get_news_display():
                 while story_right_edge > WIDTH:
                     stories[-1] = FONT[7].render(
                         truncate(story, length=len(story)-cuts), 1, COLOUR[2])
-                    stories_pos[-1] = stories[-1].get_rect(left=WIDTH/100, bottom=HEIGHT-HEIGHT/200)
+                    stories_pos[-1] = stories[-1].get_rect(
+                        left=WIDTH/100, bottom=HEIGHT-HEIGHT/200)
                     story_right_edge = (stories_pos[-1][2] + 10)
                     cuts += 1
     timestamp("Completed generating news display...")
@@ -224,11 +228,14 @@ def get_alt_news_display():
         news = []
         news.extend(get_news(sub))
         sub_offset += int(HEIGHT*0.017)
-        stories.append(FONT[4].render(truncate(sub, title=True), 1, COLOUR[2]))
-        stories_pos.append(stories[-1].get_rect(left=WIDTH*0.27, top=sub_offset))
+        stories.append(FONT[4].render(
+            truncate(sub, title=True), 1, COLOUR[2]))
+        stories_pos.append(stories[-1].get_rect(
+            left=WIDTH*0.27, top=sub_offset))
         sub_offset += int(HEIGHT*0.057)
         for story in news:
-            stories.append(FONT[3].render(truncate(story), 1, COLOUR[2]))
+            stories.append(FONT[3].render(
+                truncate(story), 1, COLOUR[2]))
             stories_pos.append(stories[-1].get_rect(
                 left=WIDTH/3.41, top=sub_offset))
             story_right_edge = (stories_pos[-1][2] + WIDTH * 0.26)
@@ -289,7 +296,6 @@ def main(screen):
 
     # Planned features:
     #  - Multiple weather sources
-    #  - Icons to text (using OW font)
     #  - Automatic on/off based on motion/light sensor
 
     timestamp("Initialising main program...")
@@ -356,6 +362,7 @@ if __name__ == '__main__':
             FPS_LIMIT = 1
             MOUSE_VISIBLE = False
             TIMESTAMP = True
+    # if above remove change this from elif to if:
     elif settings.autodetect_resolution is False:
         RESOLUTION = WIDTH, HEIGHT = settings.resolution
         SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
@@ -375,5 +382,6 @@ if __name__ == '__main__':
         COLOUR = [(255, 255, 255), (0, 0, 0), (0, 0, 0)]
     else:
         COLOUR = [(0, 0, 0), (128, 128, 128), (255, 255, 255)]
-    FONT = [pygame.font.Font(ttf, int(size*HEIGHT)) for ttf, size in settings.fonts]
+    FONT = [pygame.font.Font(ttf, int(size*HEIGHT))
+            for ttf, size in settings.fonts]
     main(SCREEN)
