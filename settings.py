@@ -26,6 +26,9 @@ mouse_visible = False
 # or a multiple of this:
 update_delay = 1800
 
+# Print activity to stdout:
+timestamp = False
+
 # Sets font options and sizes, TTF fonts only, number is scale factor (multlied
 # with resolution height):
 # 0 = Loading font,

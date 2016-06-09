@@ -13,8 +13,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-from sys import argv
-from os import remove
+from sys import argv, version as pyver
+from os import remove, uname
 from platform import system
 import time
 try:
@@ -27,6 +27,25 @@ import pygame
 import praw
 import settings
 import translations
+
+
+def timestamp(activity):
+    '''Prints timestamps of functions'''
+    if TIMESTAMP is True:
+        if activity == "sysinfo":
+            print("OS={}".format(uname()[3]))
+            print("PYGAME={}, BACKEND={}".format(
+                pygame.vernum, pygame.display.get_driver()))
+            print("PYTHON={}".format(pyver))
+            print("VIDEO={}".format(pygame.display.Info()))
+            try:
+                print("DIRECTX={}".format(pygame.dx_version_string))
+            except AttributeError:
+                pass
+        else:
+            year, month, day, hour, minute, second = time.localtime()[0:6]
+            print("{}/{}/{} {}:{}:{} - {}".format(
+                year, month, day, hour, minute, second, activity))
 
 
 def fetch_weather_info():
@@ -43,6 +62,7 @@ def fetch_weather_info():
     # Planned features:
     #  - Ability to use multiple services
 
+    timestamp("Fetching weather...")
     save_path = settings.saved_weather_data_path
     try:
         with open(save_path, "r") as save_data:
@@ -75,6 +95,7 @@ def fetch_weather_info():
         remove(save_path)
         return fetch_weather_info()
     # Return resulting weather data after parsing:
+    timestamp("Completed fetching weather...")
     return parse_weather_info(settings.weather_city, result)
 
 
@@ -113,12 +134,14 @@ def parse_weather_info(city, data):
 
 def get_news(sub, limit=settings.item_count):
     '''get_news(subreddit: str) -> news: [str]'''
+    timestamp("Getting news...")
     user_agent = settings.user_agent.format(system(), settings.version)
     reddit, result = praw.Reddit(user_agent=user_agent), {}
     submission = reddit.get_subreddit(sub).get_top_from_day(limit=limit)
     result = []
     for story in submission:
         result.append(story.title)
+    timestamp("Completed getting news...")
     return result
 
 
@@ -137,6 +160,7 @@ def truncate(text, title=False, length=100):
 
 def get_weather_display():
     '''returns the imagery and text for the weather display'''
+    timestamp("Generating weather display...")
     # fetches data for weather info:
     weather_info = fetch_weather_info()
     # Sets text for weather info, (text, antialiasing, colour, [background]):
@@ -159,11 +183,13 @@ def get_weather_display():
         weather_text[2].get_rect(left=WIDTH/100, top=sum(heights[0:2])),
         weather_text[3].get_rect(left=WIDTH/100, top=sum(heights[0:3]))
         )
+    timestamp("Completed generating weather display...")
     return (weather_text, weather_text_pos)
 
 
 def get_news_display():
     '''returns news text and rects'''
+    timestamp("Generating news display...")
     subs = settings.subreddits
     news, stories, stories_pos, subreddit, subreddit_pos = [], [], [], [], []
     for sub in subs:
@@ -185,11 +211,13 @@ def get_news_display():
                     stories_pos[-1] = stories[-1].get_rect(left=WIDTH/100, bottom=HEIGHT-HEIGHT/200)
                     story_right_edge = (stories_pos[-1][2] + 10)
                     cuts += 1
+    timestamp("Completed generating news display...")
     return (subreddit, subreddit_pos, stories, stories_pos)
 
 
 def get_alt_news_display():
     '''returns news text and rects'''
+    timestamp("Generating news display...")
     subs = settings.subreddits
     sub_offset, news, stories, stories_pos = -10, [], [], []
     for sub in subs:
@@ -219,6 +247,7 @@ def get_alt_news_display():
             # Check if the next news item will run off the screen:
             if sub_offset >= HEIGHT*0.96:
                 break
+    timestamp("Completed generating news display...")
     return (stories, stories_pos)
 
 
@@ -248,6 +277,7 @@ def check_events(events):
     for event in events:
         # 2 = pygame.KEYDOWN, 27 = pygame.K_ESCAPE
         if event.type == 2 and event.key == 27:
+            timestamp("Quitting...")
             pygame.quit()
             quit()
 
@@ -262,7 +292,8 @@ def main(screen):
     #  - Icons to text (using OW font)
     #  - Automatic on/off based on motion/light sensor
 
-    refresh, last_refresh_time = True, 0
+    timestamp("Initialising main program...")
+    refresh, last_refresh_time = True, time.time()
     # Initialises the display
     # Enables clock, used for frame rate limiter:
     game_clock = pygame.time.Clock()
@@ -272,14 +303,15 @@ def main(screen):
     screen.blit(load_str, load_str.get_rect(centerx=WIDTH/2, centery=HEIGHT/2))
     pygame.display.flip()
     while True:
-        time_since_refresh = int(time.time() - last_refresh_time)
+        time_since_refresh = time.time() - last_refresh_time
         # Sets the framerate (located in settings.py), 0 = no limit:
         if FPS_LIMIT > 0 or refresh is True:
             game_clock.tick(FPS_LIMIT)
         else:
             game_clock.tick()
         # Checks to see if the information needs to be refreshed:
-        if refresh:
+        if refresh is True:
+            last_refresh_time, refresh = time.time(), False
             # Fetch the weather and news:
             weather, weather_pos = get_weather_display()
             if settings.bottom_feed:
@@ -287,7 +319,6 @@ def main(screen):
                 story_number, story_disp_time = 0, time.time()
             else:
                 story, story_pos = get_alt_news_display()
-            refresh, last_refresh_time = False, int(time.time())
         # Checks for keyboard events (quit), no return:
         check_events(pygame.event.get())
         # Draws the background:
@@ -309,7 +340,7 @@ def main(screen):
             fps, fps_pos = get_framerate(game_clock)
             screen.blit(fps, fps_pos)
         # Checks if a refresh is required:
-        if time_since_refresh >= settings.update_delay:
+        if time_since_refresh > settings.update_delay:
             refresh = True
         # Renders the total display:
         pygame.display.flip()
@@ -324,22 +355,25 @@ if __name__ == '__main__':
             SCREEN = pygame.display.set_mode((1024, 600), pygame.FULLSCREEN)
             FPS_LIMIT = 1
             MOUSE_VISIBLE = False
+            TIMESTAMP = True
     elif settings.autodetect_resolution is False:
         RESOLUTION = WIDTH, HEIGHT = settings.resolution
         SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
         FPS_LIMIT = settings.fps_limit
         MOUSE_VISIBLE = settings.mouse_visible
+        TIMESTAMP = settings.timestamp
     else:
         SCREEN = pygame.display.set_mode((0, 0), get_display_mode())
         RESOLUTION = WIDTH, HEIGHT = SCREEN.get_width(), SCREEN.get_height()
         FPS_LIMIT = settings.fps_limit
         MOUSE_VISIBLE = settings.mouse_visible
+        TIMESTAMP = settings.timestamp
+    if TIMESTAMP is True:
+        timestamp("sysinfo")
     # Initialise the fonts and colours from translations.py:
     if settings.invert_colours:
         COLOUR = [(255, 255, 255), (0, 0, 0), (0, 0, 0)]
     else:
         COLOUR = [(0, 0, 0), (128, 128, 128), (255, 255, 255)]
     FONT = [pygame.font.Font(ttf, int(size*HEIGHT)) for ttf, size in settings.fonts]
-    print("Display Mode: {}".format(pygame.display.get_driver()))
-    print(pygame.display.Info())
     main(SCREEN)
