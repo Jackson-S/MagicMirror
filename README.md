@@ -1,6 +1,6 @@
 ##**Magic Mirror**
-Magic mirror display application written in python, supports weather data from the Australian Bureau of
-Meteorology and news data from Reddit.
+Magic mirror display written in python, supports weather data from the Australian Bureau of Meteorology
+and news data from Reddit.
 ![Screenshot](/screenshot.png)
 
 

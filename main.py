@@ -329,7 +329,7 @@ def main():
             screen.blit(sub[story_number], sub_pos[story_number])
             screen.blit(story[story_number], story_pos[story_number])
             if time.time() - story_disp_time >= settings.refresh_time:
-                story_number += 1
+                story_number = (story_number + 1) % settings.item_count
                 story_disp_time = time.time()
         else:
             for item, item_pos in zip(story, story_pos):
