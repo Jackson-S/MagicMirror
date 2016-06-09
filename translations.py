@@ -2,6 +2,15 @@
 from settings import resolution
 import pygame
 
+###########################################################################
+# The strings in this file can all be translated into another language if #
+# someone is kind enough to volunteer and keep it up to date.             #
+# Non-latin character sets excluding cyrillic may not render correctly    #
+# due to font errors.                                                     #
+###########################################################################
+
+# Conditions are searched through by the weather parser and the keys
+# are the icon in unicode and the offset required by the weather icon.
 conditions = {
              "sun": (u"", resolution[1]*0.047),
              "clear": (u"", resolution[1]*0.047),
@@ -22,7 +31,8 @@ conditions = {
              "overcast": (u"", 0)
              }
 
-# Magic numbers from pygame.MODE settings
+# These are the command line launch options. Feel free to translate them,
+# but don't change the pygame.* values as this will likely break things.
 modes = {
          "--fullscreen": pygame.FULLSCREEN,
          "--hwacceleration": pygame.DOUBLEBUF | pygame.HWSURFACE,
@@ -33,7 +43,5 @@ modes = {
          "--pi": pygame.FULLSCREEN
          }
 
-disp_err_str = '''Unknown mode {}, using default of "{}"
-supported modes are fullscreen, doublebuffered, noframe and window'''
-
+# Text displayed at launch
 loading_text = "Loading..."

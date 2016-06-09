@@ -1,3 +1,11 @@
+#############################################################################
+# All settings in this file are user-changable. Don't change the formatting #
+# or you may cause weird bugs. I will not toubleshoot issues if you have    #
+# modified this file and don't include it in the bug report! Please note    #
+# the comments above settings as there are some bugs caused by changing     #
+# settings I am already aware of and they are all listed in the comments.   #
+#############################################################################
+
 '''UI Settings'''
 version = "0.2"
 
