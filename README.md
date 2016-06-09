@@ -19,7 +19,7 @@ Supports weather data from the Australian Bureau of Meteorology and news from Re
 --noframe gives a border-less window, --hwfullscreen is the same as fullscreen on all platforms I have tested
 the rest should be self-explanatory
 
-Tested on Raspbian (on a RPi 3) and Mac OS X, submit an issue if it fails to run on your system
+Tested on Raspbian (on a RPi 3 and RPi0) and Mac OS X, submit an issue if it fails to run on your system
 and I will attempt to address it.
 
 This program is provided under the MIT license and as such it comes without any warranty,
