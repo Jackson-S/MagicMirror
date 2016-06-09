@@ -35,7 +35,9 @@ fonts = [
         ("resources/font-heavy.ttf", int(0.067*resolution[1])),
         ("resources/font-light.ttf", int(0.037*resolution[1])),
         ("resources/font-regular.ttf", int(0.05*resolution[1])),
-        ("resources/weather-icons.ttf", int(0.25*resolution[1]))
+        ("resources/weather-icons.ttf", int(0.25*resolution[1])),
+        ("resources/font-regular.ttf", int(0.08*resolution[1])),
+        ("resources/font-light.ttf", int(0.047*resolution[1]))
         ]
 
 '''Weather Settings'''

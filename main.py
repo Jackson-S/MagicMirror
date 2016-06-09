@@ -163,9 +163,9 @@ def get_alt_news_display():
         news = []
         news.extend(get_news(sub))
         for story in news:
-            subreddit.append(FONT[4].render(truncate(sub, title=True), 1, COLOUR[2]))
+            subreddit.append(FONT[6].render(truncate(sub, title=True), 1, COLOUR[2]))
             subreddit_pos.append(subreddit[-1].get_rect(left=0, bottom=HEIGHT*0.95))
-            stories.append(FONT[3].render(truncate(story), 1, COLOUR[2]))
+            stories.append(FONT[7].render(truncate(story), 1, COLOUR[2]))
             stories_pos.append(stories[-1].get_rect(left=10, bottom=HEIGHT))
             story_right_edge = stories_pos[-1][2]
             # Check if the news item is wider than the screen edge:
@@ -173,7 +173,7 @@ def get_alt_news_display():
                 cuts = 0
                 # Repeatedly truncate() the text until it fits:
                 while story_right_edge > WIDTH:
-                    stories[-1] = FONT[3].render(
+                    stories[-1] = FONT[7].render(
                         truncate(story, length=len(story)-cuts), 1, COLOUR[2])
                     stories_pos[-1] = stories[-1].get_rect(left=0, bottom=HEIGHT)
                     story_right_edge = (stories_pos[-1][2] + 10)
