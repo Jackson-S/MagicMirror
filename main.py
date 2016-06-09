@@ -14,16 +14,14 @@ from sys import argv, version as py_ver
 from os import remove
 from platform import system
 import time
-
+import pygame
+import praw
+import settings
+import translations
 if py_ver[0] == "3":
     from urllib.request import Request, urlopen, URLError
 else:
     from urllib2 import Request, urlopen, URLError
-
-import pygame
-import praw
-# Import external settings files:
-import settings, translations
 
 
 def fetch_weather_info():
@@ -311,6 +309,6 @@ if __name__ == '__main__':
     pygame.init()
     # Initialise the fonts and colours from translations.py:
     RESOLUTION = WIDTH, HEIGHT = settings.resolution
-    COLOUR = translations.colour
-    FONT = [pygame.font.Font(ttf, size) for ttf, size in translations.fonts]
+    COLOUR = [(0, 0, 0), (128, 128, 128), (255, 255, 255)]
+    FONT = [pygame.font.Font(ttf, size) for ttf, size in settings.fonts]
     main()
