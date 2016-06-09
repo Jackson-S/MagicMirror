@@ -29,8 +29,7 @@ modes = {
          "--hwfullscreen": pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.FULLSCREEN,
          "--doublebuffered": pygame.DOUBLEBUF,
          "--noframe": pygame.NOFRAME,
-         "--window": 0,
-         "--opengl": pygame.OPENGL | pygame.OPENGLBLIT
+         "--window": 0
          }
 
 disp_err_str = '''Unknown mode {}, using default of "{}"

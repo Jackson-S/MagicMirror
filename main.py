@@ -16,12 +16,13 @@ from __future__ import unicode_literals
 from sys import argv
 from os import remove
 from platform import system
-from math import ceil
 import time
 try:
     from urllib.request import Request, urlopen, URLError
 except ImportError:
     from urllib2 import Request, urlopen, URLError
+    # For python2.7 compatability:
+    FileNotFoundError = None
 import pygame
 import praw
 import settings
@@ -237,7 +238,7 @@ def get_display_mode():
 def get_framerate(clock):
     '''Returns framerate font item and rect item'''
     fps = FONT[3].render("{} fps. Press Esc to quit.".format(
-            int(ceil(clock.get_fps()))), 1, COLOUR[1])
+        int(round(clock.get_fps()))), 1, COLOUR[1])
     fps_pos = fps.get_rect(right=WIDTH-WIDTH/100, top=0)
     return (fps, fps_pos)
 
@@ -273,7 +274,7 @@ def main(screen):
     while True:
         time_since_refresh = int(time.time() - last_refresh_time)
         # Sets the framerate (located in settings.py), 0 = no limit:
-        if settings.fps_limit > 0 or refresh == True:
+        if settings.fps_limit > 0 or refresh is True:
             game_clock.tick(settings.fps_limit)
         else:
             game_clock.tick()

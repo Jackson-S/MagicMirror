@@ -4,16 +4,16 @@ version = "0.2"
 autodetect_resolution = True
 
 # 16:9 (or close to) resolutions only at the moment.
-resolution = (2560, 1600)
+resolution = (1024, 640)
 
 # Framerate limit, 0 for unlimited:
-fps_limit = 5
+fps_limit = 30
 
 # True = black on white, False = white on black
-invert_colours = True
+invert_colours = False
 
 # Display framerate in corner:
-display_framerate = False
+display_framerate = True
 
 # Default display mode:
 def_disp_mode = "--fullscreen"
@@ -33,7 +33,9 @@ update_delay = 1800
 # 2 = Temperature title,
 # 3 = Weather description/News story/FPS counter,
 # 4 = Subreddit heading,
-# 5 = Weather icon font
+# 5 = Weather icon font,
+# 6 = Alt news title,
+# 7 = Alt news text
 fonts = [
         ("resources/font-heavy.ttf", 0.14),
         ("resources/font-heavy.ttf", 0.086),
