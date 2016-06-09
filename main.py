@@ -9,19 +9,22 @@
 #                              (c) Jackson Sommerich 2016 #
 ###########################################################
 
-from __future__ import print_function, division
-from sys import argv, version as py_ver
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+from sys import argv
 from os import remove
 from platform import system
 import time
+try:
+    from urllib.request import Request, urlopen, URLError
+except ImportError:
+    from urllib2 import Request, urlopen, URLError
 import pygame
 import praw
 import settings
 import translations
-if py_ver[0] == "3":
-    from urllib.request import Request, urlopen, URLError
-else:
-    from urllib2 import Request, urlopen, URLError
 
 
 def fetch_weather_info():
@@ -241,7 +244,7 @@ def check_events(events):
             quit()
 
 
-def main():
+def main(screen):
     '''main() -> None
     UI of the program, calls all other modules.
     '''
@@ -253,7 +256,6 @@ def main():
 
     refresh, last_refresh_time = True, 0
     # Initialises the display
-    screen = pygame.display.set_mode(RESOLUTION, get_display_mode())
     # Enables clock, used for frame rate limiter:
     game_clock = pygame.time.Clock()
     pygame.mouse.set_visible(settings.mouse_visible)
@@ -264,7 +266,7 @@ def main():
     while True:
         time_since_refresh = int(time.time() - last_refresh_time)
         # Sets the framerate (located in settings.py), 0 = no limit:
-        if settings.fps_limit > 0:
+        if settings.fps_limit > 0 or refresh == True:
             game_clock.tick(settings.fps_limit)
         else:
             game_clock.tick()
@@ -307,8 +309,9 @@ def main():
 
 if __name__ == '__main__':
     pygame.init()
-    # Initialise the fonts and colours from translations.py:
     RESOLUTION = WIDTH, HEIGHT = settings.resolution
+    SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
+    # Initialise the fonts and colours from translations.py:
     COLOUR = [(0, 0, 0), (128, 128, 128), (255, 255, 255)]
     FONT = [pygame.font.Font(ttf, size) for ttf, size in settings.fonts]
-    main()
+    main(SCREEN)

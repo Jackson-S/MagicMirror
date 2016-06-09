@@ -6,13 +6,13 @@ version = "0.2"
 resolution = (1920, 1080)
 
 # Framerate limit, 0 for unlimited:
-fps_limit = 0
+fps_limit = 5
 
 # Display framerate in corner:
 display_framerate = True
 
 # Default display mode:
-def_disp_mode = "--window"
+def_disp_mode = "--fullscreen"
 
 # Allows mouse to be visible on the window
 mouse_visible = False
