@@ -21,10 +21,10 @@ saved_weather_data_path = "resources/weather_data"
 # User agent string for praw:
 user_agent = "{}:MagicMirror/Jackson-S/com.github:{} (by /u/plainchips)"
 # Items to display for each subreddit:
-item_count = 3
+item_count = 10
 # Subreddits to fetch data from
-subreddits = ["Australia"]
+subreddits = ["Australia", "Worldnews"]
 # Changed to a fade-in/out bottom feed.
 # To get original list behaviour set to false:
 bottom_feed = True
-refresh_time = 3
+refresh_time = 6

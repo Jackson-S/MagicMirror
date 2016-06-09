@@ -1,45 +1,26 @@
 # -*- coding: UTF-8 -*-
 from settings import resolution
-import pygame 
-conditions = [
-              "sun",
-              "clear",
-              "cloud",
-              "rain",
-              "heavy rain",
-              "shower",
-              "storm",
-              "thunder",
-              "lightning",
-              "hail",
-              "snow",
-              "cyclone",
-              "wind",
-              "partly cloudy",
-              "light showers",
-              "tornado",
-              "overcast"
-              ]
+import pygame
 
-translation = {
-               "sun": (u"", resolution[1]*0.047),
-               "clear": (u"", resolution[1]*0.047),
-               "cloud": (u"", 0),
-               "rain": (u"", 0),
-               "heavy rain": (u"", 0),
-               "shower": (u"", 0),
-               "storm": (u"", 0),
-               "thunder": (u"", 0),
-               "lightning": (u"", 0),
-               "hail": (u"", 0),
-               "snow": (u"", 0),
-               "cyclone": (u"", 0),
-               "wind": (u"", 0),
-               "partly cloudy": (u"", 0),
-               "light showers": (u"", 0),
-               "tornado": (u"", 0),
-               "overcast": (u"", 0)
-               }
+conditions = {
+             "sun": (u"", resolution[1]*0.047),
+             "clear": (u"", resolution[1]*0.047),
+             "cloud": (u"", 0),
+             "rain": (u"", 0),
+             "heavy rain": (u"", 0),
+             "shower": (u"", 0),
+             "storm": (u"", 0),
+             "thunder": (u"", 0),
+             "lightning": (u"", 0),
+             "hail": (u"", 0),
+             "snow": (u"", 0),
+             "cyclone": (u"", 0),
+             "wind": (u"", 0),
+             "partly cloudy": (u"", 0),
+             "light showers": (u"", 0),
+             "tornado": (u"", 0),
+             "overcast": (u"", 0)
+             }
 
 # Magic numbers from pygame.MODE settings
 modes = {
@@ -68,12 +49,12 @@ colour = [
 # 3 = Weather description/News story/FPS counter
 # 4 = Subreddit heading
 fonts = [
-        ("resources/font/font-heavy.ttf", int(0.14*resolution[1])),
-        ("resources/font/font-heavy.ttf", int(0.086*resolution[1])),
-        ("resources/font/font-heavy.ttf", int(0.067*resolution[1])),
-        ("resources/font/font-light.ttf", int(0.037*resolution[1])),
-        ("resources/font/font-regular.ttf", int(0.05*resolution[1])),
-        ("resources/font/weather-icons.ttf", int(0.25*resolution[1]))
+        ("resources/font-heavy.ttf", int(0.14*resolution[1])),
+        ("resources/font-heavy.ttf", int(0.086*resolution[1])),
+        ("resources/font-heavy.ttf", int(0.067*resolution[1])),
+        ("resources/font-light.ttf", int(0.037*resolution[1])),
+        ("resources/font-regular.ttf", int(0.05*resolution[1])),
+        ("resources/weather-icons.ttf", int(0.25*resolution[1]))
         ]
 
 disp_err_str = '''Unknown mode {}, using default of "{}"
