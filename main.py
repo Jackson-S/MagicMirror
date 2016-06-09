@@ -354,7 +354,7 @@ def main(screen):
             for item, item_pos in zip(story, story_pos):
                 screen.blit(item, item_pos)
         # Renders the fps counter:
-        if settings.display_framerate is True:
+        if SHOW_FPS is True:
             fps, fps_pos = get_framerate(game_clock)
             screen.blit(fps, fps_pos)
         # Checks if a refresh is required:
@@ -374,6 +374,7 @@ if __name__ == '__main__':
             FPS_LIMIT = 1
             MOUSE_VISIBLE = False
             TIMESTAMP = True
+            SHOW_FPS = False
     # if above remove change this from elif to if:
     elif settings.autodetect_resolution is False:
         RESOLUTION = WIDTH, HEIGHT = settings.resolution
@@ -381,12 +382,14 @@ if __name__ == '__main__':
         FPS_LIMIT = settings.fps_limit
         MOUSE_VISIBLE = settings.mouse_visible
         TIMESTAMP = settings.timestamp
+        SHOW_FPS = settings.display_framerate
     else:
         SCREEN = pygame.display.set_mode((0, 0), get_display_mode())
         RESOLUTION = WIDTH, HEIGHT = SCREEN.get_width(), SCREEN.get_height()
         FPS_LIMIT = settings.fps_limit
         MOUSE_VISIBLE = settings.mouse_visible
         TIMESTAMP = settings.timestamp
+        SHOW_FPS = settings.display_framerate
     if TIMESTAMP is True:
         timestamp("sysinfo")
     # Initialise the fonts and colours from translations.py:
