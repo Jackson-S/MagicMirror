@@ -6,7 +6,7 @@
 # settings I am already aware of and they are all listed in the comments.   #
 #############################################################################
 
-'''UI Settings'''
+'''Main Settings'''
 version = "0.2"
 
 autodetect_resolution = True
@@ -18,7 +18,7 @@ resolution = (1024, 640)
 fps_limit = 30
 
 # True = black on white, False = white on black
-invert_colours = False
+invert_colours = True
 
 # Display framerate in corner:
 display_framerate = True
@@ -36,6 +36,9 @@ update_delay = 1800
 
 # Print activity to stdout:
 timestamp = False
+
+# Retry connection # times:
+attempts = 5
 
 # Sets font options and sizes, TTF fonts only, number is scale factor (multlied
 # with resolution height):

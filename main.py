@@ -69,6 +69,7 @@ def fetch_weather_info():
 
     timestamp("Fetching weather...")
     save_path = settings.saved_weather_data_path
+    connection_attempts = 0
     try:
         with open(save_path, "r") as save_data:
             # Get elapsed time since update and check against update delay:
@@ -88,11 +89,17 @@ def fetch_weather_info():
                 bom_data = urlopen(Request(
                     settings.weather_url)).read().decode("utf-8")
             except URLError:
-                timestamp("No network connection, quitting.")
-                save_data.close()
-                remove(save_path)
-                pygame.quit()
-                quit()
+                connection_attempts += 1
+                if connection_attempts != settings.attempts:
+                    timestamp("Failed to connect, trying again in 5 seconds.")
+                    time.sleep(5)
+                    return fetch_weather_info()
+                else:
+                    timestamp("Failed to connect {} times. Quitting...").format(
+                        settings.attempts
+                    )
+                    pygame.quit()
+                    quit()
             save_data.write("{}\n{}".format(current_time, bom_data))
         return fetch_weather_info()
     except ValueError:
@@ -139,15 +146,30 @@ def parse_weather_info(city, data):
 
 def get_news(sub, limit=settings.item_count):
     '''get_news(subreddit: str) -> news: [str]'''
-    timestamp("Getting news...")
-    user_agent = settings.user_agent.format(system(), settings.version)
-    reddit, result = praw.Reddit(user_agent=user_agent), {}
-    submission = reddit.get_subreddit(sub).get_top_from_day(limit=limit)
-    result = []
-    for story in submission:
-        result.append(story.title)
-    timestamp("Completed getting news...")
-    return result
+    connection_attempts = 0
+    from requests.exceptions import ConnectionError
+    try:
+        timestamp("Getting news...")
+        user_agent = settings.user_agent.format(system(), settings.version)
+        reddit, result = praw.Reddit(user_agent=user_agent), {}
+        submission = reddit.get_subreddit(sub).get_top_from_day(limit=limit)
+        result = []
+        for story in submission:
+            result.append(story.title)
+        timestamp("Completed getting news...")
+        return result
+    except ConnectionError:
+        connection_attempts += 1
+        if connection_attempts != settings.attempts:
+            timestamp("Failed to connect, trying again in 5 seconds.")
+            time.sleep(5)
+            return get_news(sub)
+        else:
+            timestamp("Failed to connect {} times. Quitting...").format(
+                settings.attempts
+            )
+            pygame.quit()
+            quit()
 
 
 def truncate(text, title=False, length=100):
