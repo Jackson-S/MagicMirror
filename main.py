@@ -325,7 +325,7 @@ def get_time():
     else:
         am_pm = "am"
     time_disp = (FONT[1].render("{}:0{} {}".format(
-        hour % 12, minute, ap_pm), 1, COLOUR[2]))
+        hour % 12, minute, am_pm), 1, COLOUR[2]))
     # TO FIX:
     if minute < 10:
         time_disp = (FONT[1].render("{}:0{} {}".format(
