@@ -40,7 +40,7 @@ timestamp = False
 # Sets font options and sizes, TTF fonts only, number is scale factor (multlied
 # with resolution height):
 # 0 = Loading font,
-# 1 = City font,
+# 1 = City/Time font,
 # 2 = Temperature title,
 # 3 = Weather description/News story/FPS counter,
 # 4 = Subreddit heading,
@@ -75,7 +75,16 @@ saved_weather_data_path = "resources/weather_data"
 item_count = 10
 
 # Subreddits to fetch data from:
-subreddits = ["News"]
+subreddits = [
+              "worldnews",
+              "news",
+              "australia",
+              "sydney",
+              "raspberry_pi",
+              "gaming",
+              "science",
+              "programming"
+              ]
 
 # Changed to a fade-in/out bottom feed.
 # To get original list behaviour set to false:

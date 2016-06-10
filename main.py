@@ -34,24 +34,16 @@ def timestamp(activity):
     if TIMESTAMP is True:
         if activity == "sysinfo":
             try:
-                print("OS={}".format(uname()[3]))
-            except AttributeError:
-                pass
-            try:
+                print("OS={}".format(
+                    uname()[3]))
                 print("PYGAME={}, BACKEND={}".format(
                     pygame.vernum, pygame.display.get_driver()))
-            except AttributeError:
-                pass
-            try:
-                print("PYTHON={}".format(pyver))
-            except AttributeError:
-                pass
-            try:
-                print("VIDEO={}".format(pygame.display.Info()))
-            except AttributeError:
-                pass
-            try:
-                print("DIRECTX={}".format(pygame.dx_version_string))
+                print("PYTHON={}".format(
+                    pyver))
+                print("VIDEO={}".format(
+                    pygame.display.Info()))
+                print("DIRECTX={}".format(
+                    pygame.dx_version_string))
             except AttributeError:
                 pass
         else:
@@ -73,6 +65,7 @@ def fetch_weather_info():
 
     # Planned features:
     #  - Ability to use multiple services
+    #  - Try again on network failure
 
     timestamp("Fetching weather...")
     save_path = settings.saved_weather_data_path
@@ -95,7 +88,7 @@ def fetch_weather_info():
                 bom_data = urlopen(Request(
                     settings.weather_url)).read().decode("utf-8")
             except URLError:
-                print("No network connection.")
+                timestamp("No network connection, quitting.")
                 save_data.close()
                 remove(save_path)
                 pygame.quit()
@@ -103,7 +96,7 @@ def fetch_weather_info():
             save_data.write("{}\n{}".format(current_time, bom_data))
         return fetch_weather_info()
     except ValueError:
-        print("Error in file, deleting and retrying download.")
+        timestamp("Error in file, deleting and retrying download.")
         remove(save_path)
         return fetch_weather_info()
     # Return resulting weather data after parsing:
@@ -121,6 +114,7 @@ def parse_weather_info(city, data):
 
     # Planned features:
     #  - 7-day forecast
+    #  - Merge with fetch_weather_info()
 
     string, result, index = "", [], data.find(city.title())
     while True:
@@ -301,7 +295,25 @@ def check_events(events):
             quit()
 
 
-def main(screen):
+def get_time():
+    '''Gets the time and date, date format is D/M/Y'''
+    year, month, day, hour, minute, second = time.localtime()[0:6]
+    date_disp = (FONT[1].render("{}-{}-{}".format(
+        day, month, year), 1, COLOUR[2]))
+    # TO FIX:
+    if minute < 10:
+        time_disp = (FONT[1].render("{}:0{}".format(
+            hour, minute), 1, COLOUR[2]))
+    else:
+        time_disp = (FONT[1].render("{}:{}".format(
+            hour, minute), 1, COLOUR[2]))
+    date_disp_pos = date_disp.get_rect(
+        right=WIDTH*0.98, top=HEIGHT*0.01)
+    time_disp_pos = time_disp.get_rect(
+        right=WIDTH*0.98, top=HEIGHT*0.01+date_disp_pos[3])
+    return((date_disp, time_disp), (date_disp_pos, time_disp_pos))
+
+def main():
     '''main() -> None
     UI of the program, calls all other modules.
     '''
@@ -316,9 +328,9 @@ def main(screen):
     # Enables clock, used for frame rate limiter:
     game_clock = pygame.time.Clock()
     pygame.mouse.set_visible(MOUSE_VISIBLE)
-    screen.fill(COLOUR[0])
+    SCREEN.fill(COLOUR[0])
     load_str = FONT[0].render(translations.loading_text, 1, COLOUR[2])
-    screen.blit(load_str, load_str.get_rect(centerx=WIDTH/2, centery=HEIGHT/2))
+    SCREEN.blit(load_str, load_str.get_rect(centerx=WIDTH/2, centery=HEIGHT/2))
     pygame.display.flip()
     while True:
         time_since_refresh = time.time() - last_refresh_time
@@ -337,26 +349,30 @@ def main(screen):
                 story_number, story_disp_time = 0, time.time()
             else:
                 story, story_pos = get_alt_news_display()
+        # Get the time:
+        clock_disp, clock_disp_pos = get_time()
         # Checks for keyboard events (quit), no return:
         check_events(pygame.event.get())
         # Draws the background:
-        screen.fill(COLOUR[0])
+        SCREEN.fill(COLOUR[0])
         # Blits each element to the screen:
         for item, item_pos in zip(weather, weather_pos):
-            screen.blit(item, item_pos)
+            SCREEN.blit(item, item_pos)
+        for item, item_pos in zip(clock_disp, clock_disp_pos):
+            SCREEN.blit(item, item_pos)
         if settings.bottom_feed:
             if time.time() - story_disp_time >= settings.refresh_time:
                 story_number = (story_number + 1) % settings.item_count
                 story_disp_time = time.time()
-            screen.blit(sub[story_number], sub_pos[story_number])
-            screen.blit(story[story_number], story_pos[story_number])
+            SCREEN.blit(sub[story_number], sub_pos[story_number])
+            SCREEN.blit(story[story_number], story_pos[story_number])
         else:
             for item, item_pos in zip(story, story_pos):
-                screen.blit(item, item_pos)
+                SCREEN.blit(item, item_pos)
         # Renders the fps counter:
         if SHOW_FPS is True:
             fps, fps_pos = get_framerate(game_clock)
-            screen.blit(fps, fps_pos)
+            SCREEN.blit(fps, fps_pos)
         # Checks if a refresh is required:
         if time_since_refresh > settings.update_delay:
             refresh = True
@@ -399,4 +415,4 @@ if __name__ == '__main__':
         COLOUR = [(0, 0, 0), (128, 128, 128), (255, 255, 255)]
     FONT = [pygame.font.Font(ttf, int(size*HEIGHT))
             for ttf, size in settings.fonts]
-    main(SCREEN)
+    main()
