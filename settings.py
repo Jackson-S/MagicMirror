@@ -18,7 +18,7 @@ resolution = (1024, 640)
 fps_limit = 30
 
 # True = black on white, False = white on black
-invert_colours = True
+invert_colours = False
 
 # Display framerate in corner:
 display_framerate = True
