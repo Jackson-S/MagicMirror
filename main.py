@@ -324,15 +324,15 @@ def get_time():
         am_pm = "pm"
     else:
         am_pm = "am"
-    time_disp = (FONT[1].render("{}:0{} {}".format(
-        hour % 12, minute, am_pm), 1, COLOUR[2]))
+    date_disp = FONT[1].render("{}-{}-{}".format(
+        year, month, day), 1, COLOUR[2])
     # TO FIX:
     if minute < 10:
-        time_disp = (FONT[1].render("{}:0{} {}".format(
-            hour % 12, minute, am_pm), 1, COLOUR[2]))
+        time_disp = FONT[1].render("{}:0{} {}".format(
+            hour % 12, minute, am_pm), 1, COLOUR[2])
     else:
-        time_disp = (FONT[1].render("{}:{}".format(
-            hour, minute), 1, COLOUR[2]))
+        time_disp = FONT[1].render("{}:{}".format(
+            hour, minute), 1, COLOUR[2])
     date_disp_pos = date_disp.get_rect(
         right=WIDTH*0.98, top=HEIGHT*0.01)
     time_disp_pos = time_disp.get_rect(
