@@ -320,12 +320,16 @@ def check_events(events):
 def get_time():
     '''Gets the time and date, date format is D/M/Y'''
     year, month, day, hour, minute, second = time.localtime()[0:6]
-    date_disp = (FONT[1].render("{}-{}-{}".format(
-        day, month, year), 1, COLOUR[2]))
+    if hour > 12:
+        am_pm = "pm"
+    else:
+        am_pm = "am"
+    time_disp = (FONT[1].render("{}:0{} {}".format(
+        hour % 12, minute, ap_pm), 1, COLOUR[2]))
     # TO FIX:
     if minute < 10:
-        time_disp = (FONT[1].render("{}:0{}".format(
-            hour, minute), 1, COLOUR[2]))
+        time_disp = (FONT[1].render("{}:0{} {}".format(
+            hour % 12, minute, ap_pm), 1, COLOUR[2]))
     else:
         time_disp = (FONT[1].render("{}:{}".format(
             hour, minute), 1, COLOUR[2]))
