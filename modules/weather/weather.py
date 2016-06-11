@@ -10,7 +10,7 @@ except ImportError:
     FileNotFoundError = None
 import config.settings as settings
 import config.translations as translations
-from modules.debug_output import timestamp
+from debug_output import timestamp
 
 
 def fetch_weather_info():

@@ -1,9 +1,14 @@
 class _Module():
-    def __init__(self, display, colour, titlefont, bodyfont):
-        self.next_update_time = time.time()
+    def __init__(self):
+        self.nextupdatetime = time.time()
 
     def update(self):
+    '''called when update is triggered. return next item'''
         pass
 
     def need_update(self):
-        pass
+        if time.time() >= self.nextupdatetime:
+            self.nextupdatetime = time.time() + 10
+            return True
+        else:
+            return False

@@ -2,7 +2,7 @@ import time
 import pygame
 import praw
 import config.settings as settings
-from modules.debug_output import timestamp
+from debug_output import timestamp
 from platform import system
 
 

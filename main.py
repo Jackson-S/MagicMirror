@@ -19,10 +19,11 @@ import time
 import pygame
 import config.settings as settings
 import config.translations as translations
-from modules.debug_output import timestamp
+from debug_output import timestamp as timestamp
 from modules.weather.weather import fetch_weather_info, parse_weather_info
-import modules.time.time_module as time_module
-import modules.news.news as news_module
+from modules.time.time_module import TimeModule
+from modules.news.news import NewsModule
+from modules.framerate.framerate_module import FramerateModule
 
 
 def truncate(text, title=False, length=100):
@@ -41,108 +42,6 @@ def truncate(text, title=False, length=100):
         return "Error parsing string"
 
 
-def get_weather_display():
-    '''returns the imagery and text for the weather display'''
-    timestamp("Generating weather display...")
-    # fetches data for weather info:
-    weather_info = fetch_weather_info()
-    # Sets text for weather info, (text, antialiasing, colour, [background]):
-    # city_text, temp_text, condition_text, weather_icon then positions
-    weather_text = (
-        FONT[1].render(weather_info[0], 1, COLOUR[2]),
-        FONT[5].render(weather_info[3][0], 1, COLOUR[2]),
-        FONT[3].render(str(weather_info[2]), 1, COLOUR[2]),
-        FONT[2].render("{}\xb0c".format(weather_info[1]), 1, COLOUR[2]),
-        )
-    heights = (
-        weather_text[0].get_rect(left=0, top=0)[3],
-        weather_text[1].get_rect(left=0, top=0)[3],
-        weather_text[2].get_rect(left=0, top=0)[3],
-        weather_text[3].get_rect(left=0, top=0)[3]
-        )
-    weather_text_pos = (
-        weather_text[0].get_rect(left=WIDTH/100, top=0),
-        weather_text[1].get_rect(left=WIDTH/100, top=heights[0]),
-        weather_text[2].get_rect(left=WIDTH/100, top=sum(heights[0:2])),
-        weather_text[3].get_rect(left=WIDTH/100, top=sum(heights[0:3]))
-        )
-    timestamp("Completed generating weather display...")
-    return (weather_text, weather_text_pos)
-
-
-def get_news_display():
-    '''returns news text and rects'''
-    timestamp("Generating news display...")
-    subs = settings.subreddits
-    stories, stories_pos, subreddit, subreddit_pos = [], [], [], []
-    for sub in subs:
-        item = []
-        newsagent = news.News(sub)
-        item.extend(newsagent.get_news())
-        for story in item:
-            stories.append(FONT[7].render(
-                truncate(story), 1, COLOUR[2]))
-            stories_pos.append(stories[-1].get_rect(
-                left=WIDTH/100, bottom=HEIGHT-HEIGHT/200))
-            subreddit.append(FONT[6].render(
-                truncate(sub, title=True), 1, COLOUR[2]))
-            subreddit_pos.append(subreddit[-1].get_rect(
-                left=WIDTH/100, bottom=HEIGHT-stories_pos[-1][3]*0.8))
-            story_right_edge = stories_pos[-1][2]
-            # Check if the item item is wider than the screen edge:
-            if story_right_edge > WIDTH:
-                cuts = 0
-                # Repeatedly truncate() the text until it fits:
-                while story_right_edge > WIDTH:
-                    stories[-1] = FONT[7].render(
-                        truncate(story, length=len(story)-cuts), 1, COLOUR[2])
-                    stories_pos[-1] = stories[-1].get_rect(
-                        left=WIDTH/100, bottom=HEIGHT-HEIGHT/200)
-                    story_right_edge = (stories_pos[-1][2] + 10)
-                    cuts += 1
-    timestamp("Completed generating item display...")
-    return (subreddit, subreddit_pos, stories, stories_pos)
-
-
-def get_alt_news_display():
-    '''returns news text and rects'''
-    timestamp("Generating news display...")
-    subs = settings.subreddits
-    sub_offset, news, stories, stories_pos = -10, [], [], []
-    for sub in subs:
-        news = []
-        news.extend(get_news(sub))
-        sub_offset += int(HEIGHT*0.017)
-        stories.append(FONT[4].render(
-            truncate(sub, title=True), 1, COLOUR[2]))
-        stories_pos.append(stories[-1].get_rect(
-            left=WIDTH*0.27, top=sub_offset))
-        sub_offset += int(HEIGHT*0.057)
-        for story in news:
-            stories.append(FONT[3].render(
-                truncate(story), 1, COLOUR[2]))
-            stories_pos.append(stories[-1].get_rect(
-                left=WIDTH/3.41, top=sub_offset))
-            story_right_edge = (stories_pos[-1][2] + WIDTH * 0.26)
-            # Check if the news item is wider than the screen edge:
-            if story_right_edge > WIDTH*0.975:
-                cuts = 0
-                # Repeatedly truncate() the text until it fits:
-                while story_right_edge > WIDTH*0.975:
-                    stories[-1] = FONT[3].render(
-                        truncate(story, length=(len(story)-cuts)), 1, COLOUR[2])
-                    stories_pos[-1] = stories[-1].get_rect(
-                        left=WIDTH/3.41, top=sub_offset)
-                    story_right_edge = (stories_pos[-1][2] + WIDTH/3.41)
-                    cuts += 1
-            sub_offset += int(HEIGHT*0.043)
-            # Check if the next news item will run off the screen:
-            if sub_offset >= HEIGHT*0.96:
-                break
-    timestamp("Completed generating news display...")
-    return (stories, stories_pos)
-
-
 def get_display_mode():
     '''returns the desired display mode integer'''
     try:
@@ -152,16 +51,8 @@ def get_display_mode():
     try:
         return translations.modes[mode]
     except KeyError:
-        print(translations.disp_err_str.format(mode, settings.def_disp_mode))
+        timestamp("".format(translations.disp_err_str.format(mode, settings.def_disp_mode)))
         return translations.modes[settings.def_disp_mode]
-
-
-def get_framerate(clock):
-    '''Returns framerate font item and rect item'''
-    fps = FONT[3].render("{} fps. Press Esc to quit.".format(
-        int(round(clock.get_fps()))), 1, COLOUR[1])
-    fps_pos = fps.get_rect(right=WIDTH-WIDTH/100, top=0)
-    return (fps, fps_pos)
 
 
 def check_events(events):
@@ -172,29 +63,6 @@ def check_events(events):
             timestamp("Quitting...")
             pygame.quit()
             quit()
-
-
-def get_time():
-    '''Gets the time and date, date format is D/M/Y'''
-    year, month, day, hour, minute, second = time.localtime()[0:6]
-    if hour > 12:
-        am_pm = "pm"
-    else:
-        am_pm = "am"
-    date_disp = FONT[1].render("{}-{}-{}".format(
-        year, month, day), 1, COLOUR[2])
-    # TO FIX:
-    if minute < 10:
-        time_disp = FONT[1].render("{}:0{} {}".format(
-            hour % 12, minute, am_pm), 1, COLOUR[2])
-    else:
-        time_disp = FONT[1].render("{}:{}".format(
-            hour, minute), 1, COLOUR[2])
-    date_disp_pos = date_disp.get_rect(
-        right=WIDTH*0.98, top=HEIGHT*0.01)
-    time_disp_pos = time_disp.get_rect(
-        right=WIDTH*0.98, top=HEIGHT*0.01+date_disp_pos[3])
-    return((date_disp, time_disp), (date_disp_pos, time_disp_pos))
 
 
 def main():
@@ -212,21 +80,27 @@ def main():
     game_clock = pygame.time.Clock()
     pygame.mouse.set_visible(MOUSE_VISIBLE)
     modules = [
-        news_module.NewsModule(SCREEN, COLOUR[2], FONT[6], FONT[7]),
-        time_module.TimeModule(WIDTH, HEIGHT, COLOUR[2], FONT[1])
-        ]
+            NewsModule(SCREEN, COLOUR[2], FONT[6], FONT[7]),
+            TimeModule(WIDTH, HEIGHT, COLOUR[2], FONT[1]),
+            FramerateModule(WIDTH, HEIGHT, COLOUR[2], FONT[3], game_clock)
+            ]
     module_display = [None]*len(modules)
+    requires_update = False
     while True:
-        SCREEN.fill(COLOUR[0])
+        game_clock.tick()
+        check_events(pygame.event.get())
         for module_no, module in enumerate(modules):
             if module.need_update() is True:
                 module_display[module_no] = module.update()
-        for module in module_display:
-            for item, item_pos in module:
-                SCREEN.blit(item, item_pos)
-        game_clock.tick()
+                requires_update = True
+                timestamp("Updating {}".format(module), show_debug=False)
+        if requires_update is True:
+            SCREEN.fill(COLOUR[0])
+            for module in module_display:
+                for item, item_pos in module:
+                    SCREEN.blit(item, item_pos)
+            pygame.display.flip()
         check_events(pygame.event.get())
-        pygame.display.flip()
 
 
 if __name__ == '__main__':
