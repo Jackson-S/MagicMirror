@@ -21,7 +21,7 @@ the rest should be self-explanatory.
 
 Fonts can be customised, however expect some issues with overlap as this is not supported.
 
-Tested on Raspbian (on a RPi 3 and RPi0) and Mac OS X, submit an issue if it fails to run on your system
+Tested on Raspbian (on a RPi 3 and RPi 0) and Mac OS X, submit an issue if it fails to run on your system
 and I will attempt to address it.
 
 This program is provided under the MIT license and as such it comes without any warranty,
