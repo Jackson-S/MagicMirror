@@ -15,174 +15,30 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from sys import argv, version as pyver
 from os import remove, uname
-from platform import system
 import time
-try:
-    from urllib.request import Request, urlopen, URLError
-except ImportError:
-    from urllib2 import Request, urlopen, URLError
-    # For python2.7 compatability:
-    FileNotFoundError = None
 import pygame
-import praw
-import settings
-import translations
-
-
-def timestamp(activity):
-    '''Prints timestamps of functions'''
-    if TIMESTAMP is True:
-        if activity == "sysinfo":
-            try:
-                print("OS={}".format(
-                    uname()[3]))
-                print("PYGAME={}, BACKEND={}".format(
-                    pygame.vernum, pygame.display.get_driver()))
-                print("PYTHON={}".format(
-                    pyver))
-                print("VIDEO={}".format(
-                    pygame.display.Info()))
-                print("DIRECTX={}".format(
-                    pygame.dx_version_string))
-            except AttributeError:
-                pass
-        else:
-            year, month, day, hour, minute, second = time.localtime()[0:6]
-            print("{}/{}/{} {}:{}:{} - {}".format(
-                year, month, day, hour, minute, second, activity))
-
-
-def fetch_weather_info():
-    '''
-    fetch_weather_info() -> parse_weather_info()
-    See _parse_weather_info for more details on return type.
-
-    Fetches weather info and manages request frequency and data saving.
-    To get weather info call this function, not _parse_weather_info unless
-    you know what you're doing and don't require flood control or saved
-    data return.
-    '''
-
-    # Planned features:
-    #  - Ability to use multiple services
-    #  - Try again on network failure
-
-    timestamp("Fetching weather...")
-    save_path = settings.saved_weather_data_path
-    connection_attempts = 0
-    try:
-        with open(save_path, "r") as save_data:
-            # Get elapsed time since update and check against update delay:
-            time_since_check = time.time() - int(save_data.readline())
-            if time_since_check > settings.weather_update_delay:
-                # Raises to trigger data update in except clause:
-                raise IOError
-            else:
-                result = str(save_data.read())
-    # Exception if weather_data can't be opened:
-    except(IOError, FileNotFoundError):
-        # Fetch data from a URL and save it to weather_data,
-        # then call self:
-        with open(save_path, "w") as save_data:
-            current_time = str(int(time.time()))
-            try:
-                bom_data = urlopen(Request(
-                    settings.weather_url)).read().decode("utf-8")
-            except URLError:
-                connection_attempts += 1
-                if connection_attempts != settings.attempts:
-                    timestamp("Failed to connect, trying again in 5 seconds.")
-                    time.sleep(5)
-                    return fetch_weather_info()
-                else:
-                    timestamp("Failed to connect {} times. Quitting...").format(
-                        settings.attempts
-                    )
-                    pygame.quit()
-                    quit()
-            save_data.write("{}\n{}".format(current_time, bom_data))
-        return fetch_weather_info()
-    except ValueError:
-        timestamp("Error in file, deleting and retrying download.")
-        remove(save_path)
-        return fetch_weather_info()
-    # Return resulting weather data after parsing:
-    timestamp("Completed fetching weather...")
-    return parse_weather_info(settings.weather_city, result)
-
-
-def parse_weather_info(city, data):
-    '''parse_weather_info(city, data) -> (city, temperature, description, icon)
-
-    Parses bureau of meteorology IDA00100.dat file from their FTP server and
-    returns city name, temperature, current conditions and the appropriate
-    icon to represent the weather. Call through fetch_weather_info().
-    '''
-
-    # Planned features:
-    #  - 7-day forecast
-    #  - Merge with fetch_weather_info()
-
-    string, result, index = "", [], data.find(city.title())
-    while True:
-        string = string + data[index]
-        index += 1
-        if string[-1] == "#":
-            result.append(string[0:-1])
-            string = ""
-            continue
-        if string[-1] == "\n":
-            break
-    description = result[-1].lower()
-    condition = [condition for condition in translations.conditions
-                 if description.find(condition) != -1]
-    if len(condition) > 0:
-        condition = translations.conditions[condition[0]]
-    else:
-        condition = u""
-    temperature, description = result[-2], result[-1].title()
-    return (city, temperature, description, condition)
-
-
-def get_news(sub, limit=settings.item_count):
-    '''get_news(subreddit: str) -> news: [str]'''
-    connection_attempts = 0
-    from requests.exceptions import ConnectionError
-    try:
-        timestamp("Getting news...")
-        user_agent = settings.user_agent.format(system(), settings.version)
-        reddit, result = praw.Reddit(user_agent=user_agent), {}
-        submission = reddit.get_subreddit(sub).get_top_from_day(limit=limit)
-        result = []
-        for story in submission:
-            result.append(story.title)
-        timestamp("Completed getting news...")
-        return result
-    except ConnectionError:
-        connection_attempts += 1
-        if connection_attempts != settings.attempts:
-            timestamp("Failed to connect, trying again in 5 seconds.")
-            time.sleep(5)
-            return get_news(sub)
-        else:
-            timestamp("Failed to connect {} times. Quitting...").format(
-                settings.attempts
-            )
-            pygame.quit()
-            quit()
+import config.settings as settings
+import config.translations as translations
+from modules.debug_output import timestamp
+from modules.weather.weather import fetch_weather_info, parse_weather_info
+import modules.time.time_module as time_module
+import modules.news.news as news_module
 
 
 def truncate(text, title=False, length=100):
     '''truncate(text, title: bool, length: int, suffix: str) -> unicode'''
     if title:
         text = text.title()
-    if len(text) <= length:
-        if (text[-1] != "?" or "." or "!" or ":") and not title:
-            return u"{}{}".format(text, ".")
+    try:
+        if len(text) <= length:
+            if (text[-1] != "?" or "." or "!" or ":") and not title:
+                return u"{}{}".format(text, ".")
+            else:
+                return u"{}".format(text)
         else:
-            return u"{}".format(text)
-    else:
-        return u" ".join(text[:length+1].split(" ")[:-1]) + u"…"
+            return u" ".join(text[:length+1].split(" ")[:-1]) + u"…"
+    except UnicodeError:
+        return "Error parsing string"
 
 
 def get_weather_display():
@@ -218,11 +74,12 @@ def get_news_display():
     '''returns news text and rects'''
     timestamp("Generating news display...")
     subs = settings.subreddits
-    news, stories, stories_pos, subreddit, subreddit_pos = [], [], [], [], []
+    stories, stories_pos, subreddit, subreddit_pos = [], [], [], []
     for sub in subs:
-        news = []
-        news.extend(get_news(sub))
-        for story in news:
+        item = []
+        newsagent = news.News(sub)
+        item.extend(newsagent.get_news())
+        for story in item:
             stories.append(FONT[7].render(
                 truncate(story), 1, COLOUR[2]))
             stories_pos.append(stories[-1].get_rect(
@@ -232,7 +89,7 @@ def get_news_display():
             subreddit_pos.append(subreddit[-1].get_rect(
                 left=WIDTH/100, bottom=HEIGHT-stories_pos[-1][3]*0.8))
             story_right_edge = stories_pos[-1][2]
-            # Check if the news item is wider than the screen edge:
+            # Check if the item item is wider than the screen edge:
             if story_right_edge > WIDTH:
                 cuts = 0
                 # Repeatedly truncate() the text until it fits:
@@ -243,7 +100,7 @@ def get_news_display():
                         left=WIDTH/100, bottom=HEIGHT-HEIGHT/200)
                     story_right_edge = (stories_pos[-1][2] + 10)
                     cuts += 1
-    timestamp("Completed generating news display...")
+    timestamp("Completed generating item display...")
     return (subreddit, subreddit_pos, stories, stories_pos)
 
 
@@ -339,6 +196,7 @@ def get_time():
         right=WIDTH*0.98, top=HEIGHT*0.01+date_disp_pos[3])
     return((date_disp, time_disp), (date_disp_pos, time_disp_pos))
 
+
 def main():
     '''main() -> None
     UI of the program, calls all other modules.
@@ -349,60 +207,25 @@ def main():
     #  - Automatic on/off based on motion/light sensor
 
     timestamp("Initialising main program...")
-    refresh, last_refresh_time = True, time.time()
     # Initialises the display
     # Enables clock, used for frame rate limiter:
     game_clock = pygame.time.Clock()
     pygame.mouse.set_visible(MOUSE_VISIBLE)
-    SCREEN.fill(COLOUR[0])
-    load_str = FONT[0].render(translations.loading_text, 1, COLOUR[2])
-    SCREEN.blit(load_str, load_str.get_rect(centerx=WIDTH/2, centery=HEIGHT/2))
-    pygame.display.flip()
+    modules = [
+        news_module.NewsModule(SCREEN, COLOUR[2], FONT[6], FONT[7]),
+        time_module.TimeModule(WIDTH, HEIGHT, COLOUR[2], FONT[1])
+        ]
+    module_display = [None]*len(modules)
     while True:
-        time_since_refresh = time.time() - last_refresh_time
-        # Sets the framerate (located in settings.py), 0 = no limit:
-        if FPS_LIMIT > 0 or refresh is True:
-            game_clock.tick(FPS_LIMIT)
-        else:
-            game_clock.tick()
-        # Checks to see if the information needs to be refreshed:
-        if refresh is True:
-            last_refresh_time, refresh = time.time(), False
-            # Fetch the weather and news:
-            weather, weather_pos = get_weather_display()
-            if settings.bottom_feed:
-                sub, sub_pos, story, story_pos = get_news_display()
-                story_number, story_disp_time = 0, time.time()
-            else:
-                story, story_pos = get_alt_news_display()
-        # Get the time:
-        clock_disp, clock_disp_pos = get_time()
-        # Checks for keyboard events (quit), no return:
-        check_events(pygame.event.get())
-        # Draws the background:
         SCREEN.fill(COLOUR[0])
-        # Blits each element to the screen:
-        for item, item_pos in zip(weather, weather_pos):
-            SCREEN.blit(item, item_pos)
-        for item, item_pos in zip(clock_disp, clock_disp_pos):
-            SCREEN.blit(item, item_pos)
-        if settings.bottom_feed:
-            if time.time() - story_disp_time >= settings.refresh_time:
-                story_number = (story_number + 1) % settings.item_count
-                story_disp_time = time.time()
-            SCREEN.blit(sub[story_number], sub_pos[story_number])
-            SCREEN.blit(story[story_number], story_pos[story_number])
-        else:
-            for item, item_pos in zip(story, story_pos):
+        for module_no, module in enumerate(modules):
+            if module.need_update() is True:
+                module_display[module_no] = module.update()
+        for module in module_display:
+            for item, item_pos in module:
                 SCREEN.blit(item, item_pos)
-        # Renders the fps counter:
-        if SHOW_FPS is True:
-            fps, fps_pos = get_framerate(game_clock)
-            SCREEN.blit(fps, fps_pos)
-        # Checks if a refresh is required:
-        if time_since_refresh > settings.update_delay:
-            refresh = True
-        # Renders the total display:
+        game_clock.tick()
+        check_events(pygame.event.get())
         pygame.display.flip()
 
 
@@ -410,35 +233,39 @@ if __name__ == '__main__':
     pygame.init()
     # Mode specifically for my personal setup. Feel free to ignore it/remove it:
     if len(argv) > 1:
+        # If running on a raspberry pi use --pi:
         if argv[1] == "--pi":
             RESOLUTION = WIDTH, HEIGHT = (1024, 600)
             SCREEN = pygame.display.set_mode((1024, 600), pygame.FULLSCREEN)
-            FPS_LIMIT = 1
-            MOUSE_VISIBLE = False
-            TIMESTAMP = True
-            SHOW_FPS = False
-    # if above remove change this from elif to if:
-    elif settings.autodetect_resolution is False:
-        RESOLUTION = WIDTH, HEIGHT = settings.resolution
-        SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
-        FPS_LIMIT = settings.fps_limit
-        MOUSE_VISIBLE = settings.mouse_visible
-        TIMESTAMP = settings.timestamp
-        SHOW_FPS = settings.display_framerate
+        # If using any other --option:
+        else:
+            if settings.autodetect_resolution is True:
+                SCREEN = pygame.display.set_mode((0, 0), get_display_mode())
+                RESOLUTION = WIDTH, HEIGHT = SCREEN.get_width(), SCREEN.get_height()
+            else:
+                RESOLUTION = WIDTH, HEIGHT = settings.resolution
+                SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
+    # If no arguments are passed:
     else:
-        SCREEN = pygame.display.set_mode((0, 0), get_display_mode())
-        RESOLUTION = WIDTH, HEIGHT = SCREEN.get_width(), SCREEN.get_height()
-        FPS_LIMIT = settings.fps_limit
-        MOUSE_VISIBLE = settings.mouse_visible
-        TIMESTAMP = settings.timestamp
-        SHOW_FPS = settings.display_framerate
-    if TIMESTAMP is True:
-        timestamp("sysinfo")
+        if settings.autodetect_resolution is True:
+            SCREEN = pygame.display.set_mode((0, 0), get_display_mode())
+            RESOLUTION = WIDTH, HEIGHT = SCREEN.get_width(), SCREEN.get_height()
+        else:
+            RESOLUTION = WIDTH, HEIGHT = settings.resolution
+            SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
+        # Generic settings
+    FPS_LIMIT = settings.fps_limit
+    MOUSE_VISIBLE = settings.mouse_visible
+    TIMESTAMP = settings.timestamp
+    SHOW_FPS = settings.display_framerate
+
     # Initialise the fonts and colours from translations.py:
     if settings.invert_colours:
         COLOUR = [(255, 255, 255), (0, 0, 0), (0, 0, 0)]
     else:
         COLOUR = [(0, 0, 0), (128, 128, 128), (255, 255, 255)]
+
     FONT = [pygame.font.Font(ttf, int(size*HEIGHT))
             for ttf, size in settings.fonts]
+    timestamp("sysinfo")
     main()
