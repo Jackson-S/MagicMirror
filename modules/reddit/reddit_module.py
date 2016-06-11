@@ -6,7 +6,7 @@ from debug_output import timestamp
 from platform import system
 
 
-class NewsModule:
+class RedditModule:
     # TODO: Cropping, Error handling
     def __init__(self, display, colour, titlefont, bodyfont):
         timestamp("Initialising news module...")

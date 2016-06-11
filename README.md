@@ -1,12 +1,11 @@
 ##**Magic Mirror**
-Magic mirror display written in python, supports weather data from the Australian Bureau of Meteorology
-and news data from Reddit.
-![Screenshot](/screenshot.png)
+Modular magic mirror display written in python.
+![Screenshot](/screenshots/screenshot1.png)
 
 
 ####Requirements:
     - pygame
-    - praw
+    - praw (for reddit module)
 
 ####Usage:
 >python main.py [--display mode]

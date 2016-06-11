@@ -13,16 +13,16 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-from sys import argv, version as pyver
-from os import remove, uname
+from sys import argv
+from os import remove
 import time
 import pygame
 import config.settings as settings
 import config.translations as translations
 from debug_output import timestamp as timestamp
-from modules.weather.weather import fetch_weather_info, parse_weather_info
+from modules.bom.bom_weather_module import fetch_weather_info, parse_weather_info
 from modules.time.time_module import TimeModule
-from modules.news.news import NewsModule
+from modules.reddit.reddit_module import RedditModule
 from modules.framerate.framerate_module import FramerateModule
 
 
@@ -80,7 +80,7 @@ def main():
     game_clock = pygame.time.Clock()
     pygame.mouse.set_visible(MOUSE_VISIBLE)
     modules = [
-            NewsModule(SCREEN, COLOUR[2], FONT[6], FONT[7]),
+            RedditModule(SCREEN, COLOUR[2], FONT[6], FONT[7]),
             TimeModule(WIDTH, HEIGHT, COLOUR[2], FONT[1]),
             FramerateModule(WIDTH, HEIGHT, COLOUR[2], FONT[3], game_clock)
             ]

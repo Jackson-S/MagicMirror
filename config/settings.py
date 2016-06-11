@@ -80,7 +80,9 @@ item_count = 1
 # Subreddits to fetch data from:
 subreddits = [
               "raspberry_pi",
-              "Australia"
+              "Australia",
+              "Worldnews",
+              "Sydney"
               ]
 
 # Changed to a fade-in/out bottom feed.
