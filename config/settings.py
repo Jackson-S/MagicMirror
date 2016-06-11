@@ -12,7 +12,7 @@ version = "0.2"
 autodetect_resolution = False
 
 # 16:9 (or close to) resolutions only at the moment.
-resolution = (1024, 640)
+resolution = (1280, 800)
 
 # Framerate limit, 0 for unlimited:
 fps_limit = 30
@@ -75,7 +75,7 @@ saved_weather_data_path = "resources/weather_data"
 
 '''News Settings'''
 # Items to display for each subreddit:
-item_count = 1
+item_count = 10
 
 # Subreddits to fetch data from:
 subreddits = [

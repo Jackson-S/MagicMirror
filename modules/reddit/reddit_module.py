@@ -35,7 +35,7 @@ class RedditModule:
 
     def need_update(self):
         if time.time() >= self.nextupdatetime:
-            self.nextupdatetime = time.time() + settings.refresh_time
+            #self.nextupdatetime = time.time() + settings.refresh_time
             return True
         else:
-            return False
+            return True
