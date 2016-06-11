@@ -1,0 +1,9 @@
+class _Module():
+    def __init__(self, display, colour, titlefont, bodyfont):
+        self.next_update_time = time.time()
+
+    def update(self):
+        pass
+
+    def need_update(self):
+        pass
