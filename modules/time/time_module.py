@@ -30,11 +30,17 @@ class TimeModule():
             else:
                 period = "am"
             hour = hour % 12 + 1
-            time_string = "{h:02d}:{m:02d} {p}".format(h=hour, m=minute, p=period)
+            time_string = "{h}:{m:02d} {p}".format(h=hour, m=minute, p=period)
         date_disp = self.font.render(date_string, 1, self.colour)
         time_disp = self.font.render(time_string, 1, self.colour)
-        date_pos = date_disp.get_rect(right=self.width*0.98, top=self.height*0.01)
-        time_pos = time_disp.get_rect(right=self.width*0.98, top=self.height*0.01 + date_pos[3])
+        date_pos = date_disp.get_rect(
+            right=self.width*0.98,
+            top=self.height*0.01
+            )
+        time_pos = time_disp.get_rect(
+            right=self.width*0.98,
+            top=self.height*0.01 + date_pos[3]
+            )
         return((date_disp, date_pos), (time_disp, time_pos))
 
     def need_update(self):

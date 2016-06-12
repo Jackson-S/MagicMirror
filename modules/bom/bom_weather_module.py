@@ -17,8 +17,8 @@ from debug_output import timestamp
 class BOMWeatherModule():
     def __init__(self, width, height, colour):
         timestamp("Initialising BOMWeatherModule module...")
-        fonts = [pygame.font.Font(ttf, int(size*height))
-                for ttf, size in settings.fonts]
+        self.url = "ftp://ftp2.bom.gov.au/anon/gen/fwo/IDA00100.dat"
+        fonts = [pygame.font.Font(ttf, int(size*height)) for ttf, size in settings.fonts]
         self.width, self.height = width, height
         self.colour = colour
         self.tempfont = fonts[2]
@@ -115,7 +115,7 @@ class BOMWeatherModule():
     def ioerror(self):
         timestamp("Save file read error occurred. Trying again.")
         with open(self.savepath, "w") as save_data:
-            self.weatherdata = urlopen(Request(settings.weather_url))
+            self.weatherdata = urlopen(Request(self.url))
             self.weatherdata = self.weatherdata.read().decode("utf-8")
             save_data.write(str(self.nextupdatetime))
             save_data.write("\n{}".format(self.weatherdata))

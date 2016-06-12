@@ -9,25 +9,26 @@
 #############################################################################
 
 '''Main Settings'''
-version = "0.2"
+version = "0.3"
 
-autodetect_resolution = False
+# Should be true, unless issues arise or you wish to use windowed mode
+autodetect_resolution = True
 
+# Default resolution, in the case of autodetect_resolution set to False
 resolution = (800, 480)
 
-# True = black on white, False = white on black
-invert_colours = False
+# Default display mode, in the case of none or incorrect display mode
+# being specified:
+def_disp_mode = "--fullscreen"
 
-# Default display mode:
-def_disp_mode = "--window"
-
-# Allows mouse to be visible on the window
+# Allows mouse to be visible on the window, if you want that for some reason:
 mouse_visible = False
 
-# Print activity to stdout:
-show_debug = True
+# Show debug activity of stdout, useful for module creation, and debugging:
+show_debug = False
 
-# Retry connection # times:
+# If the network connection is lost this is the amount of tries to redownload
+# data after failure:
 attempts = 5
 
 # Sets font options and sizes, TTF fonts only, number is scale factor (multlied
@@ -51,7 +52,7 @@ fonts = [
         ("resources/font-light.ttf", 0.047)
         ]
 
-# Change the colours around if you'd like. (R, G, B)
+# Change the colours around if you'd like. (R, G, B):
 colour = [
          (0, 0, 0),        # Background
          (128, 128, 128),  # Grey-text
@@ -72,34 +73,27 @@ saved_weather_data_path = "resources/weather_data"
 
 
 '''RedditModule Settings'''
-reddit_update_delay = 3600
+reddit_refresh_delay = 3600
 
 # Items to display for each subreddit:
-item_count = 10
-
-# Subreddits to fetch data from:
-subreddits = [
-              "raspberry_pi",
-              "Australia",
-              "Worldnews",
-              "Sydney"
-              ]
-
-# Changed to a fade-in/out bottom feed.
-# To get original list behaviour set to false:
-bottom_feed = True
+reddit_item_count = 10
 
 # Time between story changes, requires bottom_feed
 # setting to be enabled to have any effect:
 refresh_time = 6
 
-# User agent string for praw:
-useragent = "{}:MagicMirror/Jackson-S/com.github:{} (by /u/plainchips)"
+# Subreddits to fetch data from:
+reddit_subreddits = [
+                    "raspberry_pi",
+                    "Australia",
+                    "Worldnews",
+                    "Sydney"
+                    ]
 
 
 '''TimeModule Settings'''
 # 0 = 24hr
 # 1 = 12hr
-time_format = 0
+time_format = 1
 # for a leading 0 in the month and day use "{d:02d}-{m:02d}-{y}":
 date_format = "{d:02d}-{m:02d}-{y}"

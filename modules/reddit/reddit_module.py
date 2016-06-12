@@ -12,20 +12,21 @@ class RedditModule:
     # TODO: Cropping, Error handling
     def __init__(self, width, height, colour, titlefont, bodyfont):
         timestamp("Initialising news module...")
-        self.subreddits = settings.subreddits
-        self.limit = settings.item_count
+        self.subreddits = settings.reddit_subreddits
+        self.limit = settings.reddit_item_count
         self.titlefont = titlefont
         self.bodyfont = bodyfont
         self.colour = colour
         self.width = width
         self.height = height
-        useragent = settings.useragent.format(system(), settings.version)
+        useragent = "{}:MagicMirror/Jackson-S/com.github:{} (by /u/plainchips)"
+        useragent = useragent.format(system(), settings.version)
         self.praw_agent = praw.Reddit(user_agent=useragent)
         self.stories = []
         self.fetch_news()
         self.count = 0
         self.nextupdatetime = 0
-        self.nextrefreshtime = time.time() + settings.reddit_update_delay
+        self.nextrefreshtime = time.time() + settings.reddit_refresh_delay
 
     def update(self):
         if self.nextrefreshtime < time.time():

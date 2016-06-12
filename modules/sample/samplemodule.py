@@ -19,7 +19,7 @@ class SampleModule():
         '''
         # Set the screen width and height:
         self.width, self.height = width, height
-        
+
         # Set the colour:
         self.colour = colour
 
@@ -77,4 +77,4 @@ class SampleModule():
 # FINALLY:
 # To load your module add it to the import list of main.py,
 # and then add it to the marked area of the main() function in
-# main.py as shown. 
+# main.py as shown.
