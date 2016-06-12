@@ -29,7 +29,7 @@ class TimeModule():
                 period = "pm"
             else:
                 period = "am"
-            hour = hour % 12 + 1
+            hour = hour % 13 + 1
             time_string = "{h}:{m:02d} {p}".format(h=hour, m=minute, p=period)
         date_disp = self.font.render(date_string, 1, self.colour)
         time_disp = self.font.render(time_string, 1, self.colour)

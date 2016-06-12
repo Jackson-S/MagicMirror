@@ -60,13 +60,11 @@ colour = [
          ]
 
 '''BOMWeatherModule Settings'''
-# URL for bom weather data. Do not touch:
-weather_url = "ftp://ftp2.bom.gov.au/anon/gen/fwo/IDA00100.dat"
-
 # City to get weather for, Australian capitol cities only:
 weather_city = "Sydney"
 
-# Delay before updating old data in seconds, BOM has a flood detection:
+# Delay before allowing a  data update in seconds,
+# Do not flood BOM, it's only current/next day weather data anyway:
 weather_update_delay = 3600
 
 saved_weather_data_path = "resources/weather_data"
@@ -82,11 +80,12 @@ reddit_item_count = 10
 # setting to be enabled to have any effect:
 refresh_time = 6
 
-# Subreddits to fetch data from:
+# Subreddits to get headlines from:
 reddit_subreddits = [
-                    "raspberry_pi",
-                    "Australia",
+                    "Python",
+                    "Raspberry_pi",
                     "Worldnews",
+                    "Australia",
                     "Sydney"
                     ]
 

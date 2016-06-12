@@ -24,8 +24,11 @@ from modules.time.time_module import TimeModule
 from modules.reddit.reddit_module import RedditModule
 from modules.framerate.framerate_module import FramerateModule
 from modules.loading.loadingmodule import LoadingModule
-# Tutorial module:
-from modules.sample.samplemodule import SampleModule
+
+#############################################################################
+# Tutorial module below, uncomment and follow instructions in main() to try #
+#############################################################################
+# from modules.sample.samplemodule import SampleModule
 
 
 def get_display_mode():
@@ -37,7 +40,10 @@ def get_display_mode():
     try:
         return modes[mode]
     except KeyError:
-        timestamp("{}".format(translations.disp_err_str.format(mode, settings.def_disp_mode)))
+        timestamp("{}".format(
+            translations.disp_err_str.format(
+                mode, settings.def_disp_mode),
+            priority=1))
         return translations.modes[settings.def_disp_mode]
 
 
@@ -62,19 +68,20 @@ def main():
     timestamp("Loading modules...")
     modules = []
 
-    '''To add a new module first add it to the import list at the top
-    and then add it to this list using this format:
-
-    timestamp("Loading BOMWeatherModule")
-    modules.append(BOMWeatherModule(WIDTH, HEIGHT, COLOUR[2], [OTHER REQUIREMENTS]))
-
-    COLOUR[2] is the foreground colour, and other requirements is anything else
-    your module requires from the main loop in order to display correctly.
-    Fonts can either be imported here or created in module in the __init__
-    function.
-    The timestamp isn't needed but it will help with debugging
-    if your module causes errors.
-    '''
+    ############################################################################
+    # '''To add a new module first add it to the import list at the top        #
+    # and then add it to this list using this format:                          #
+    #                                                                          #
+    # timestamp("Loading SampleModule")                                        #
+    # modules.append(SampleModule(WIDTH, HEIGHT, COLOUR[2], [OTHER]))          #
+    #                                                                          #
+    # COLOUR[2] is the foreground colour, and other is anything else           #
+    # your module requires from the main loop in order to display correctly.   #
+    # Fonts can either be imported here or created in module in the __init__   #
+    # function.                                                                #
+    # The timestamp isn't needed but it will help with debugging               #
+    # if your module causes errors.                                            #
+    ############################################################################
 
     timestamp("Loading BOMWeatherModule")
     modules.append(BOMWeatherModule(WIDTH, HEIGHT, COLOUR[2]))
@@ -82,13 +89,13 @@ def main():
     modules.append(RedditModule(WIDTH, HEIGHT, COLOUR[2], FONT[6], FONT[7]))
     timestamp("Loading TimeModule")
     modules.append(TimeModule(WIDTH, HEIGHT, COLOUR[2], FONT[1]))
-    '''Framerate module doesn't do anything now that adaptive framerate
-    has been implemented, and so it is disabled, but kept just in case'''
-    # timestamp("Loading FramerateModule")
-    # modules.append(FramerateModule(WIDTH, HEIGHT, COLOUR[2], FONT[3], game_clock))
-    '''Enable this module to use the "hello world" sample module'''
+######
+    ##############################################################
+    # Enable this module to use the "hello world" sample module. #
+    ##############################################################
     # timestamp("Loading SampleModule")
     # modules.append(SampleModule(WIDTH, HEIGHT, COLOUR[2]))
+######
     timestamp("Completed loading modules.")
 
     module_display = [None]*len(modules)
@@ -117,20 +124,14 @@ def main():
 
 if __name__ == '__main__':
     pygame.init()
-    # Mode specifically for my personal setup. Feel free to ignore it/remove it:
+    # If display arguments are passed:
     if len(argv) > 1:
-        # If running on a raspberry pi use --pi:
-        if argv[1] == "--pi":
-            RESOLUTION = WIDTH, HEIGHT = (1024, 600)
-            SCREEN = pygame.display.set_mode((1024, 600), pygame.FULLSCREEN)
-        # If using any other --option:
+        if settings.autodetect_resolution is True and argv[1] != "--window":
+            SCREEN = pygame.display.set_mode((0, 0), get_display_mode())
+            RESOLUTION = WIDTH, HEIGHT = SCREEN.get_width(), SCREEN.get_height()
         else:
-            if settings.autodetect_resolution is True:
-                SCREEN = pygame.display.set_mode((0, 0), get_display_mode())
-                RESOLUTION = WIDTH, HEIGHT = SCREEN.get_width(), SCREEN.get_height()
-            else:
-                RESOLUTION = WIDTH, HEIGHT = settings.resolution
-                SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
+            RESOLUTION = WIDTH, HEIGHT = settings.resolution
+            SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
     # If no arguments are passed:
     else:
         if settings.autodetect_resolution is True:
@@ -146,6 +147,7 @@ if __name__ == '__main__':
     SCREEN.fill((0, 0, 0))
     SCREEN.blit(loading[0], loading[1])
     pygame.display.flip()
+    # Delete the module as it is only displayed once
     del loading
 
     # Initialise the fonts and colours from settings.py:
