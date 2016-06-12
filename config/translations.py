@@ -12,23 +12,23 @@ import pygame
 # Conditions are searched through by the weather parser and the keys
 # are the icon in unicode and the offset required by the weather icon.
 conditions = {
-             "sun": (u"", resolution[1]*0.047),
-             "clear": (u"", resolution[1]*0.047),
-             "cloud": (u"", 0),
-             "rain": (u"", 0),
-             "heavy rain": (u"", 0),
-             "shower": (u"", 0),
-             "storm": (u"", 0),
-             "thunder": (u"", 0),
-             "lightning": (u"", 0),
-             "hail": (u"", 0),
-             "snow": (u"", 0),
-             "cyclone": (u"", 0),
-             "wind": (u"", 0),
-             "partly cloudy": (u"", 0),
-             "light showers": (u"", 0),
-             "tornado": (u"", 0),
-             "overcast": (u"", 0)
+             "sun": (u""),
+             "clear": (u""),
+             "cloud": (u""),
+             "rain": (u""),
+             "heavy rain": (u""),
+             "shower": (u""),
+             "storm": (u""),
+             "thunder": (u""),
+             "lightning": (u""),
+             "hail": (u""),
+             "snow": (u""),
+             "cyclone": (u""),
+             "wind": (u""),
+             "partly cloudy": (u""),
+             "light showers": (u""),
+             "tornado": (u""),
+             "overcast": (u"")
              }
 
 # These are the command line launch options. Feel free to translate them,
@@ -42,6 +42,3 @@ modes = {
          "--window": 0,
          "--pi": pygame.FULLSCREEN
          }
-
-# Text displayed at launch
-loading_text = "Loading..."
