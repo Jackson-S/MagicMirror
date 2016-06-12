@@ -107,7 +107,7 @@ def main():
                     requires_update = True
                     timestamp("Updating {}".format(module), show_debug=False)
                 check_events(pygame.event.get())
-                # Wait 0.5 seconds before retrying to save power:
+                # Wait 1 second before retrying to save power:
                 pygame.time.wait(1000)
         if requires_update is True:
             SCREEN.fill(COLOUR[0])

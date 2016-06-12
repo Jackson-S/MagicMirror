@@ -24,6 +24,7 @@ class RedditModule(object):
         '''called when update is triggered. return next item'''
         if self.nextrefreshtime < time.time():
             self.nextrefreshtime = time.time() + settings.reddit_refresh_delay
+            self.stories = []
             self.fetch_news()
             self.count = 0
         self.count += 1
