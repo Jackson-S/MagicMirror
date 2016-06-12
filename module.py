@@ -36,6 +36,8 @@ class HelloWorldModule():
         an array of arrays, each sub-array should contain one
         pygame object, and one pygame rect
         '''
+        # Add a timestamp to stdout:
+        timestamp("Updating HelloWorldModule...", priority=0)
 
         # Defines text objects hello and world,
         # any pygame object can be used:
@@ -62,3 +64,9 @@ class HelloWorldModule():
             return True
         else:
             return False
+
+
+# FINALLY:
+# To load your module add it to the import list of main.py,
+# and then add it to the marked area of the main() function in
+# main.py as shown. 
