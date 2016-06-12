@@ -22,15 +22,16 @@ the rest should be self-explanatory.
 Settings can be customised in the config/settings.py file. If you are having issues with your program then
 include this file in the bug report if you have modified it.
 
+####Modules:
 To create a new module follow the instructions laid out in the sample module, if you encounter any
 issues that you believe are caused by the application and not your module then please add it to the
 issue tracker and I will try and address it.
 
-Fonts can be customised, however expect some issues with overlap as this is not supported.
-
+####Compatability:
 Tested on Raspbian (on a RPi 3 and RPi 0) and Mac OS X, submit an issue if it fails to run on your system
 and I will attempt to address it.
 
+####License:
 This program is provided under the MIT license and as such it comes without any warranty,
 express or implied and any issues or damages lie solely as the responsibility of the user and no one else.
 Anybody redistributing this program must include the license file in their program.
