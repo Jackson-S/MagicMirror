@@ -1,13 +1,15 @@
 # -*- coding: UTF-8 -*-
+'''Displays timestamped module info as well as system info'''
 
 import time
-import pygame
 from os import uname
 from sys import version as pyver
+import pygame
 from config.settings import show_debug as show
 
 
 def startupinfo(show_debug=show):
+    '''Prints system information to stdout'''
     if show_debug is True:
         try:
             print("OS={}".format(

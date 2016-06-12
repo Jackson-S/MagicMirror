@@ -1,14 +1,13 @@
 # -*- coding: UTF-8 -*-
+'''Module to display a clock with the current time and date'''
 
 import time
-import pygame
-import praw
 import config.settings as settings
 from debug_output import timestamp
-from platform import system
 
 
-class TimeModule():
+class TimeModule(object):
+    '''Displays the time and date'''
     def __init__(self, width, height, colour, font):
         timestamp("Initialising time module")
         self.width = width
@@ -20,7 +19,8 @@ class TimeModule():
         self.dformat = settings.date_format
 
     def update(self):
-        year, month, day, hour, minute, second = time.localtime()[0:6]
+        '''Updates the time and date when called'''
+        year, month, day, hour, minute = time.localtime()[0:5]
         date_string = self.dformat.format(y=year, m=month, d=day)
         if self.tformat == 0:
             time_string = "{h:02d}:{m:02d}".format(h=hour, m=minute)
@@ -44,6 +44,7 @@ class TimeModule():
         return((date_disp, date_pos), (time_disp, time_pos))
 
     def need_update(self):
+        '''Returns true is update is required'''
         if time.time() >= self.nextupdatetime:
             self.nextupdatetime = time.time() + 10
             return True

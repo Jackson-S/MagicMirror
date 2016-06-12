@@ -1,9 +1,10 @@
 # -*- coding: UTF-8 -*-
-
+'''Displays a loading screen while other modules load'''
 import pygame
 
 
-class LoadingModule():
+class LoadingModule(object):
+    '''Displays the loading screen at the start of the program'''
     def __init__(self, width, height):
         self.width = width
         self.height = height

@@ -1,8 +1,7 @@
 # -*- coding: UTF-8 -*-
-
-#############################################
-# Sample hello world module/module template #
-#############################################
+''' This is a sample hello world module that can be used as a template to
+    create new modules.
+'''
 
 # Required imports, any further imports
 # that you require for your module should be placed
@@ -12,7 +11,8 @@ import pygame
 from debug_output import timestamp
 
 
-class SampleModule():
+class SampleModule(object):
+    '''Prints "hello" and "world" to each corner of the display'''
     def __init__(self, width, height, colour):
         '''Called once, create anything you require for future updates,
         and anything you require across more than one function here

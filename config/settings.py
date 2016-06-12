@@ -41,22 +41,20 @@ attempts = 5
 # 5 = Weather icon font,
 # 6 = Alt news title,
 # 7 = Alt news text
-fonts = [
-        ("resources/font-heavy.ttf", 0.14),
-        ("resources/font-heavy.ttf", 0.086),
-        ("resources/font-heavy.ttf", 0.067),
-        ("resources/font-light.ttf", 0.037),
-        ("resources/font-regular.ttf", 0.05),
-        ("resources/weather-icons.ttf", 0.25),
-        ("resources/font-regular.ttf", 0.08),
-        ("resources/font-light.ttf", 0.047)
+fonts = [("resources/font-heavy.ttf", 0.14),
+         ("resources/font-heavy.ttf", 0.086),
+         ("resources/font-heavy.ttf", 0.067),
+         ("resources/font-light.ttf", 0.037),
+         ("resources/font-regular.ttf", 0.05),
+         ("resources/weather-icons.ttf", 0.25),
+         ("resources/font-regular.ttf", 0.08),
+         ("resources/font-light.ttf", 0.047)
         ]
 
 # Change the colours around if you'd like. (R, G, B):
-colour = [
-         (0, 0, 0),        # Background
-         (128, 128, 128),  # Grey-text
-         (255, 255, 255)   # Foreground
+colour = [(0, 0, 0),        # Background
+          (128, 128, 128),  # Grey-text
+          (255, 255, 255)   # Foreground
          ]
 
 '''BOMWeatherModule Settings'''
@@ -81,12 +79,11 @@ reddit_item_count = 10
 refresh_time = 6
 
 # Subreddits to get headlines from:
-reddit_subreddits = [
-                    "Python",
-                    "Raspberry_pi",
-                    "Worldnews",
-                    "Australia",
-                    "Sydney"
+reddit_subreddits = ["Python",
+                     "Raspberry_pi",
+                     "Worldnews",
+                     "Australia",
+                     "Sydney"
                     ]
 
 

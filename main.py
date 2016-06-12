@@ -1,13 +1,13 @@
 #!/usr/bin/env/python3
 # -*- coding: UTF-8 -*-
 
-###########################################################
-# Python based magic mirror application, based on pygame  #
-# library as well as Reddit and BOM weather data.         #
-# Licensed under MIT license.                             #
-#                                                         #
-#                              (c) Jackson Sommerich 2016 #
-###########################################################
+''' Python based magic mirror application, based on pygame
+    library as well as Reddit and BOM weather data.
+    Licensed under MIT license.
+
+                            (c) Jackson Sommerich 2016
+'''
+
 
 from __future__ import absolute_import
 from __future__ import division
@@ -22,7 +22,7 @@ from debug_output import timestamp, startupinfo
 from modules.bom.bom_weather_module import BOMWeatherModule
 from modules.time.time_module import TimeModule
 from modules.reddit.reddit_module import RedditModule
-from modules.framerate.framerate_module import FramerateModule
+# from modules.framerate.framerate_module import FramerateModule
 from modules.loading.loadingmodule import LoadingModule
 
 #############################################################################
@@ -40,11 +40,8 @@ def get_display_mode():
     try:
         return modes[mode]
     except KeyError:
-        timestamp("{}".format(
-            translations.disp_err_str.format(
-                mode, settings.def_disp_mode),
-            priority=1))
-        return translations.modes[settings.def_disp_mode]
+        timestamp("Display mode error. Using default")
+        return modes[settings.def_disp_mode]
 
 
 def check_events(events):
@@ -86,7 +83,7 @@ def main():
     timestamp("Loading BOMWeatherModule")
     modules.append(BOMWeatherModule(WIDTH, HEIGHT, COLOUR[2]))
     timestamp("Loading RedditModule")
-    modules.append(RedditModule(WIDTH, HEIGHT, COLOUR[2], FONT[6], FONT[7]))
+    modules.append(RedditModule(WIDTH, HEIGHT, COLOUR[2], (FONT[6], FONT[7])))
     timestamp("Loading TimeModule")
     modules.append(TimeModule(WIDTH, HEIGHT, COLOUR[2], FONT[1]))
 ######
@@ -142,20 +139,20 @@ if __name__ == '__main__':
             SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
 
     # Display the loading screen (loading module):
-    loading = LoadingModule(WIDTH, HEIGHT)
-    loading = loading.update()
+    LOADING = LoadingModule(WIDTH, HEIGHT)
+    LOADING_DISP = LOADING.update()
     SCREEN.fill((0, 0, 0))
-    SCREEN.blit(loading[0], loading[1])
+    SCREEN.blit(LOADING_DISP[0], LOADING_DISP[1])
     pygame.display.flip()
     # Delete the module as it is only displayed once
-    del loading
+    del LOADING, LOADING_DISP
 
     # Initialise the fonts and colours from settings.py:
     COLOUR = [
-              settings.colour[0],
-              settings.colour[1],
-              settings.colour[2]
-             ]
+        settings.colour[0],
+        settings.colour[1],
+        settings.colour[2]
+        ]
     FONT = [pygame.font.Font(ttf, int(pt*HEIGHT))for ttf, pt in settings.fonts]
     startupinfo()
     main()
