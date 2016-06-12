@@ -7,7 +7,7 @@ Modular magic mirror display written in python.
     - praw (for reddit module)
 
 ####Usage:
->python main.py [--display mode]
+>python3 main.py [--display mode]
 
 ######Display modes:
     - fullscreen
