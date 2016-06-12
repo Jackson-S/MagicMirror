@@ -40,9 +40,9 @@ def startupinfo(show_debug=show):
             pass
 
 
-def timestamp(activity, priority="low", show_debug=show):
+def timestamp(activity, priority=0, show_debug=show):
     '''Prints timestamps of functions'''
-    if show_debug is True or priority == "high":
+    if show_debug is True or priority > 0:
         year, month, day, hour, minute, second = time.localtime()[0:6]
         print("{}/{}/{} {}:{}:{} - {}".format(
             year, month, day, hour, minute, second, activity))

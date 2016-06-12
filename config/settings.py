@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+
 #############################################################################
 # All settings in this file are user-changable. Don't change the formatting #
 # or you may cause weird bugs. I will not toubleshoot issues if you have    #
@@ -10,13 +11,9 @@
 '''Main Settings'''
 version = "0.2"
 
-autodetect_resolution = True
+autodetect_resolution = False
 
-# 16:9 (or close to) resolutions only at the moment.
-resolution = (1280, 800)
-
-# Framerate limit, 0 for unlimited:
-fps_limit = 30
+resolution = (800, 480)
 
 # True = black on white, False = white on black
 invert_colours = False
@@ -26,11 +23,6 @@ def_disp_mode = "--window"
 
 # Allows mouse to be visible on the window
 mouse_visible = False
-
-# Update delay for the program, note that weather has
-# a different delay setting that should be equal to
-# or a multiple of this:
-update_delay = 1800
 
 # Print activity to stdout:
 show_debug = True
@@ -59,7 +51,14 @@ fonts = [
         ("resources/font-light.ttf", 0.047)
         ]
 
-'''Weather Settings'''
+# Change the colours around if you'd like. (R, G, B)
+colour = [
+         (0, 0, 0),        # Background
+         (128, 128, 128),  # Grey-text
+         (255, 255, 255)   # Foreground
+         ]
+
+'''BOMWeatherModule Settings'''
 # URL for bom weather data. Do not touch:
 weather_url = "ftp://ftp2.bom.gov.au/anon/gen/fwo/IDA00100.dat"
 
@@ -71,7 +70,10 @@ weather_update_delay = 3600
 
 saved_weather_data_path = "resources/weather_data"
 
-'''News Settings'''
+
+'''RedditModule Settings'''
+reddit_update_delay = 3600
+
 # Items to display for each subreddit:
 item_count = 10
 
@@ -93,3 +95,11 @@ refresh_time = 6
 
 # User agent string for praw:
 useragent = "{}:MagicMirror/Jackson-S/com.github:{} (by /u/plainchips)"
+
+
+'''TimeModule Settings'''
+# 0 = 24hr
+# 1 = 12hr
+time_format = 0
+# for a leading 0 in the month and day use "{d:02d}-{m:02d}-{y}":
+date_format = "{d:02d}-{m:02d}-{y}"

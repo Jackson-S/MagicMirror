@@ -24,6 +24,8 @@ from modules.time.time_module import TimeModule
 from modules.reddit.reddit_module import RedditModule
 from modules.framerate.framerate_module import FramerateModule
 from modules.loading.loadingmodule import LoadingModule
+# Tutorial module:
+from modules.sample.samplemodule import SampleModule
 
 
 def get_display_mode():
@@ -56,7 +58,7 @@ def main():
     # Initialises the display
     # Enables clock, used for frame rate limiter:
     game_clock = pygame.time.Clock()
-    pygame.mouse.set_visible(MOUSE_VISIBLE)
+    pygame.mouse.set_visible(settings.mouse_visible)
     timestamp("Loading modules...")
     modules = []
 
@@ -80,8 +82,13 @@ def main():
     modules.append(RedditModule(WIDTH, HEIGHT, COLOUR[2], FONT[6], FONT[7]))
     timestamp("Loading TimeModule")
     modules.append(TimeModule(WIDTH, HEIGHT, COLOUR[2], FONT[1]))
-    #timestamp("Loading FramerateModule")
-    #modules.append(FramerateModule(WIDTH, HEIGHT, COLOUR[2], FONT[3], game_clock))
+    '''Framerate module doesn't do anything now that adaptive framerate
+    has been implemented, and so it is disabled, but kept just in case'''
+    # timestamp("Loading FramerateModule")
+    # modules.append(FramerateModule(WIDTH, HEIGHT, COLOUR[2], FONT[3], game_clock))
+    '''Enable this module to use the "hello world" sample module'''
+    # timestamp("Loading SampleModule")
+    # modules.append(SampleModule(WIDTH, HEIGHT, COLOUR[2]))
     timestamp("Completed loading modules.")
 
     module_display = [None]*len(modules)
@@ -141,15 +148,12 @@ if __name__ == '__main__':
     pygame.display.flip()
     del loading
 
-    # Add generic settings:
-    FPS_LIMIT = settings.fps_limit
-    MOUSE_VISIBLE = settings.mouse_visible
-    # Initialise the fonts and colours from translations.py:
-    if settings.invert_colours:
-        COLOUR = [(255, 255, 255), (0, 0, 0), (0, 0, 0)]
-    else:
-        COLOUR = [(0, 0, 0), (128, 128, 128), (255, 255, 255)]
-    FONT = [pygame.font.Font(ttf, int(size*HEIGHT))
-            for ttf, size in settings.fonts]
+    # Initialise the fonts and colours from settings.py:
+    COLOUR = [
+              settings.colour[0],
+              settings.colour[1],
+              settings.colour[2]
+             ]
+    FONT = [pygame.font.Font(ttf, int(pt*HEIGHT))for ttf, pt in settings.fonts]
     startupinfo()
     main()

@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import time
 import pygame
 import praw
@@ -14,18 +16,23 @@ class TimeModule():
         self.colour = colour
         self.font = font
         self.nextupdatetime = time.time()
+        self.tformat = settings.time_format
+        self.dformat = settings.date_format
 
     def update(self):
         year, month, day, hour, minute, second = time.localtime()[0:6]
-        am_pm = "am"
-        if hour > 11:
-            am_pm = "pm"
-        date_disp = self.font.render("{}-{}-{}".format(year, month, day), 1, self.colour)
-        # TO FIX:
-        if minute < 10:
-            time_disp = self.font.render("{}:0{} {}".format(hour % 13, minute, am_pm), 1, self.colour)
+        date_string = self.dformat.format(y=year, m=month, d=day)
+        if self.tformat == 0:
+            time_string = "{h:02d}:{m:02d}".format(h=hour, m=minute)
         else:
-            time_disp = self.font.render("{}:{}".format(hour, minute), 1, self.colour)
+            if hour > 12:
+                period = "pm"
+            else:
+                period = "am"
+            hour = hour % 12 + 1
+            time_string = "{h:02d}:{m:02d} {p}".format(h=hour, m=minute, p=period)
+        date_disp = self.font.render(date_string, 1, self.colour)
+        time_disp = self.font.render(time_string, 1, self.colour)
         date_pos = date_disp.get_rect(right=self.width*0.98, top=self.height*0.01)
         time_pos = time_disp.get_rect(right=self.width*0.98, top=self.height*0.01 + date_pos[3])
         return((date_disp, date_pos), (time_disp, time_pos))
