@@ -10,7 +10,7 @@
 '''Main Settings'''
 version = "0.2"
 
-autodetect_resolution = False
+autodetect_resolution = True
 
 # 16:9 (or close to) resolutions only at the moment.
 resolution = (1280, 800)
@@ -20,9 +20,6 @@ fps_limit = 30
 
 # True = black on white, False = white on black
 invert_colours = False
-
-# Display framerate in corner:
-display_framerate = True
 
 # Default display mode:
 def_disp_mode = "--window"
@@ -36,7 +33,7 @@ mouse_visible = False
 update_delay = 1800
 
 # Print activity to stdout:
-timestamp = True
+show_debug = True
 
 # Retry connection # times:
 attempts = 5

@@ -144,8 +144,6 @@ if __name__ == '__main__':
     # Add generic settings:
     FPS_LIMIT = settings.fps_limit
     MOUSE_VISIBLE = settings.mouse_visible
-    TIMESTAMP = settings.timestamp
-    SHOW_FPS = settings.display_framerate
     # Initialise the fonts and colours from translations.py:
     if settings.invert_colours:
         COLOUR = [(255, 255, 255), (0, 0, 0), (0, 0, 0)]
