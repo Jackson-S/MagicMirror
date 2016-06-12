@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 #############################################################################
 # All settings in this file are user-changable. Don't change the formatting #
 # or you may cause weird bugs. I will not toubleshoot issues if you have    #

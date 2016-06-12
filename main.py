@@ -14,32 +14,16 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 from sys import argv
-from os import remove
 import time
 import pygame
 import config.settings as settings
-import config.translations as translations
-from debug_output import timestamp as timestamp
-from modules.bom.bom_weather_module import fetch_weather_info, parse_weather_info
+from config.translations import modes
+from debug_output import timestamp, startupinfo
+from modules.bom.bom_weather_module import BOMWeatherModule
 from modules.time.time_module import TimeModule
 from modules.reddit.reddit_module import RedditModule
 from modules.framerate.framerate_module import FramerateModule
-
-
-def truncate(text, title=False, length=100):
-    '''truncate(text, title: bool, length: int, suffix: str) -> unicode'''
-    if title:
-        text = text.title()
-    try:
-        if len(text) <= length:
-            if (text[-1] != "?" or "." or "!" or ":") and not title:
-                return u"{}{}".format(text, ".")
-            else:
-                return u"{}".format(text)
-        else:
-            return u" ".join(text[:length+1].split(" ")[:-1]) + u"…"
-    except UnicodeError:
-        return "Error parsing string"
+from modules.loading.loadingmodule import LoadingModule
 
 
 def get_display_mode():
@@ -47,11 +31,11 @@ def get_display_mode():
     try:
         mode = argv[1]
     except IndexError:
-        return translations.modes[settings.def_disp_mode]
+        return modes[settings.def_disp_mode]
     try:
-        return translations.modes[mode]
+        return modes[mode]
     except KeyError:
-        timestamp("".format(translations.disp_err_str.format(mode, settings.def_disp_mode)))
+        timestamp("{}".format(translations.disp_err_str.format(mode, settings.def_disp_mode)))
         return translations.modes[settings.def_disp_mode]
 
 
@@ -66,39 +50,60 @@ def check_events(events):
 
 
 def main():
-    '''main() -> None
-    UI of the program, calls all other modules.
-    '''
-
-    # Planned features:
-    #  - Multiple weather sources
-    #  - Automatic on/off based on motion/light sensor
+    '''UI of the program, loads and draws all modules.'''
 
     timestamp("Initialising main program...")
     # Initialises the display
     # Enables clock, used for frame rate limiter:
     game_clock = pygame.time.Clock()
     pygame.mouse.set_visible(MOUSE_VISIBLE)
-    modules = [
-            RedditModule(SCREEN, COLOUR[2], FONT[6], FONT[7]),
-            TimeModule(WIDTH, HEIGHT, COLOUR[2], FONT[1]),
-            FramerateModule(WIDTH, HEIGHT, COLOUR[2], FONT[3], game_clock)
-            ]
+    timestamp("Loading modules...")
+    modules = []
+
+    '''To add a new module first add it to the import list at the top
+    and then add it to this list using this format:
+
+    timestamp("Loading BOMWeatherModule")
+    modules.append(BOMWeatherModule(WIDTH, HEIGHT, COLOUR[2], [OTHER REQUIREMENTS]))
+
+    COLOUR[2] is the foreground colour, and other requirements is anything else
+    your module requires from the main loop in order to display correctly.
+    Fonts can either be imported here or created in module in the __init__
+    function.
+    The timestamp isn't needed but it will help with debugging
+    if your module causes errors.
+    '''
+
+    timestamp("Loading BOMWeatherModule")
+    modules.append(BOMWeatherModule(WIDTH, HEIGHT, COLOUR[2]))
+    timestamp("Loading RedditModule")
+    modules.append(RedditModule(WIDTH, HEIGHT, COLOUR[2], FONT[6], FONT[7]))
+    timestamp("Loading TimeModule")
+    modules.append(TimeModule(WIDTH, HEIGHT, COLOUR[2], FONT[1]))
+    #timestamp("Loading FramerateModule")
+    #modules.append(FramerateModule(WIDTH, HEIGHT, COLOUR[2], FONT[3], game_clock))
+    timestamp("Completed loading modules.")
+
     module_display = [None]*len(modules)
     requires_update = False
     while True:
-        game_clock.tick()
         check_events(pygame.event.get())
-        for module_no, module in enumerate(modules):
-            if module.need_update() is True:
-                module_display[module_no] = module.update()
-                requires_update = True
-                timestamp("Updating {}".format(module), show_debug=False)
+        game_clock.tick()
+        while requires_update is False:
+            for module_no, module in enumerate(modules):
+                if module.need_update() is True:
+                    module_display[module_no] = module.update()
+                    requires_update = True
+                    timestamp("Updating {}".format(module), show_debug=False)
+                check_events(pygame.event.get())
+                # Wait 0.5 seconds before retrying to save power:
+                time.sleep(0.5)
         if requires_update is True:
             SCREEN.fill(COLOUR[0])
             for module in module_display:
                 for item, item_pos in module:
                     SCREEN.blit(item, item_pos)
+            requires_update = False
             pygame.display.flip()
         check_events(pygame.event.get())
 
@@ -127,19 +132,26 @@ if __name__ == '__main__':
         else:
             RESOLUTION = WIDTH, HEIGHT = settings.resolution
             SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
-        # Generic settings
+
+    # Display the loading screen (loading module):
+    loading = LoadingModule(WIDTH, HEIGHT)
+    loading = loading.update()
+    SCREEN.fill((0, 0, 0))
+    SCREEN.blit(loading[0], loading[1])
+    pygame.display.flip()
+    del loading
+
+    # Add generic settings:
     FPS_LIMIT = settings.fps_limit
     MOUSE_VISIBLE = settings.mouse_visible
     TIMESTAMP = settings.timestamp
     SHOW_FPS = settings.display_framerate
-
     # Initialise the fonts and colours from translations.py:
     if settings.invert_colours:
         COLOUR = [(255, 255, 255), (0, 0, 0), (0, 0, 0)]
     else:
         COLOUR = [(0, 0, 0), (128, 128, 128), (255, 255, 255)]
-
     FONT = [pygame.font.Font(ttf, int(size*HEIGHT))
             for ttf, size in settings.fonts]
-    timestamp("sysinfo")
+    startupinfo()
     main()

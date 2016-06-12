@@ -1,14 +1,23 @@
-class _Module():
-    def __init__(self):
-        self.nextupdatetime = time.time()
+import time
+import pygame
+
+
+class DefaultModule():
+    def __init__(self, width, height, font, colour):
+        self.width, self.height = width, height
+        self.font = font
+        self.updatedelay = 10  # time between update in seconds
+        self.nextupdatetime = time.time()  # time of initial update.
 
     def update(self):
-    '''called when update is triggered. return next item'''
-        pass
+        '''called when update is triggered. return next item'''
+        # Format: pygame object, pygame rect
+        return [[item1, item1_pos], [item2, item2_pos]]
 
     def need_update(self):
+        '''called once per frame, returns true if update() needs to be called'''
         if time.time() >= self.nextupdatetime:
-            self.nextupdatetime = time.time() + 10
+            self.nextupdatetime = time.time() + self.updatedelay
             return True
         else:
             return False
