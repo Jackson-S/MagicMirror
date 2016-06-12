@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import time
 from debug_output import timestamp
 

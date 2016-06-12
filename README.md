@@ -2,7 +2,6 @@
 Modular magic mirror display written in python.
 ![Screenshot](/screenshots/screenshot1.png)
 
-
 ####Requirements:
     - pygame
     - praw (for reddit module)
@@ -18,6 +17,14 @@ Modular magic mirror display written in python.
     - windowed
 --noframe gives a border-less window, --hwfullscreen is the same as fullscreen on all platforms I have tested
 the rest should be self-explanatory.
+
+####Settings:
+Settings can be customised in the config/settings.py file. If you are having issues with your program then
+include this file in the bug report if you have modified it.
+
+To create a new module follow the instructions laid out in the sample module, if you encounter any
+issues that you believe are caused by the application and not your module then please add it to the
+issue tracker and I will try and address it.
 
 Fonts can be customised, however expect some issues with overlap as this is not supported.
 
