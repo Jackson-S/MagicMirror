@@ -45,4 +45,4 @@ This program is provided under the MIT license and as such it comes without any 
 express or implied and any issues or damages lie solely as the responsibility of the user and no one else.
 Anybody redistributing this program must include the license file in their program.
 All fonts used in this program are under the SIL 1.1 Open Font License, license details can be found under
-/resources/font.
+./resources/.
