@@ -25,11 +25,14 @@ class TimeModule(object):
         if self.tformat == 0:
             time_string = "{h:02d}:{m:02d}".format(h=hour, m=minute)
         else:
-            if hour > 12:
+            if hour > 11:
                 period = "pm"
             else:
                 period = "am"
-            hour = hour % 13 + 1
+            if hour > 12:
+                hour = hour-12
+            if hour == 0:
+                hour = 12
             time_string = "{h}:{m:02d} {p}".format(h=hour, m=minute, p=period)
         date_disp = self.font.render(date_string, 1, self.colour)
         time_disp = self.font.render(time_string, 1, self.colour)

@@ -9,17 +9,7 @@
 #############################################################################
 
 '''Main Settings'''
-version = "0.3"
-
-# Should be true, unless issues arise or you wish to use windowed mode
-autodetect_resolution = True
-
-# Default resolution, in the case of autodetect_resolution set to False
-resolution = (800, 480)
-
-# Default display mode, in the case of none or incorrect display mode
-# being specified:
-def_disp_mode = "--fullscreen"
+version = "0.4"
 
 # Allows mouse to be visible on the window, if you want that for some reason:
 mouse_visible = False

@@ -1,29 +1,32 @@
 #!/usr/bin/env/python3
 # -*- coding: UTF-8 -*-
 
-''' Python based magic mirror application, based on pygame
-    library as well as Reddit and BOM weather data.
-    Licensed under MIT license.
+''' Python based modular magic mirror application,
+    design your own modules or use the included ones!
 
-                            (c) Jackson Sommerich 2016
+    Program and included modules are licensed under the
+    MIT license and are © Jackson Sommerich (2016). This
+    excludes existing third party libraries, other third
+    party works and third party data services used;
+    whose licenses can be found in the LICENSE.md file
+    or through the managing body in cases where licenses
+    could not be obtained.
 '''
-
 
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-from sys import argv
+import argparse
 import time
 import pygame
 import config.settings as settings
-from config.translations import modes
 from debug_output import timestamp, startupinfo
 from modules.bom.bom_weather_module import BOMWeatherModule
 from modules.time.time_module import TimeModule
 from modules.reddit.reddit_module import RedditModule
-# from modules.framerate.framerate_module import FramerateModule
 from modules.loading.loadingmodule import LoadingModule
+# from modules.framerate.framerate_module import FramerateModule
 
 #############################################################################
 # Tutorial module below, uncomment and follow instructions in main() to try #
@@ -32,16 +35,25 @@ from modules.loading.loadingmodule import LoadingModule
 
 
 def get_display_mode():
-    '''returns the desired display mode integer'''
-    try:
-        mode = argv[1]
-    except IndexError:
-        return modes[settings.def_disp_mode]
-    try:
-        return modes[mode]
-    except KeyError:
-        timestamp("Display mode error. Using default")
-        return modes[settings.def_disp_mode]
+    '''returns the desired display mode for the display object'''
+    # Parse all display arguments:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f", "--fullscreen",
+                        action="store_true",
+                        default=False)
+    info = pygame.display.Info()
+    parser.add_argument("-r", "--resolution",
+                        action="store",
+                        default=(info.current_w, info.current_h),
+                        help="width height",
+                        nargs=2,
+                        type=int)
+    if parser.parse_args().fullscreen is True:
+        mode = pygame.FULLSCREEN
+    else:
+        mode = 0
+    res = parser.parse_args().resolution
+    return(res[0], res[1], mode)
 
 
 def check_events(events):
@@ -121,31 +133,8 @@ def main():
 
 if __name__ == '__main__':
     pygame.init()
-    # If display arguments are passed:
-    if len(argv) > 1:
-        if settings.autodetect_resolution is True and argv[1] != "--window":
-            SCREEN = pygame.display.set_mode((0, 0), get_display_mode())
-            RESOLUTION = WIDTH, HEIGHT = SCREEN.get_width(), SCREEN.get_height()
-        else:
-            RESOLUTION = WIDTH, HEIGHT = settings.resolution
-            SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
-    # If no arguments are passed:
-    else:
-        if settings.autodetect_resolution is True:
-            SCREEN = pygame.display.set_mode((0, 0), get_display_mode())
-            RESOLUTION = WIDTH, HEIGHT = SCREEN.get_width(), SCREEN.get_height()
-        else:
-            RESOLUTION = WIDTH, HEIGHT = settings.resolution
-            SCREEN = pygame.display.set_mode(RESOLUTION, get_display_mode())
-
-    # Display the loading screen (loading module):
-    LOADING = LoadingModule(WIDTH, HEIGHT)
-    LOADING_DISP = LOADING.update()
-    SCREEN.fill((0, 0, 0))
-    SCREEN.blit(LOADING_DISP[0], LOADING_DISP[1])
-    pygame.display.flip()
-    # Delete the module as it is only displayed once
-    del LOADING, LOADING_DISP
+    WIDTH, HEIGHT, MODE = get_display_mode()
+    SCREEN = pygame.display.set_mode((WIDTH, HEIGHT), MODE)
 
     # Initialise the fonts and colours from settings.py:
     COLOUR = [
@@ -154,5 +143,15 @@ if __name__ == '__main__':
         settings.colour[2]
         ]
     FONT = [pygame.font.Font(ttf, int(pt*HEIGHT))for ttf, pt in settings.fonts]
+
+    # Display the loading screen (loading module):
+    LOADING = LoadingModule(WIDTH, HEIGHT, COLOUR[2], FONT[0])
+    LOADING_DISP = LOADING.update()
+    SCREEN.fill(COLOUR[0])
+    SCREEN.blit(LOADING_DISP[0], LOADING_DISP[1])
+    pygame.display.flip()
+    # Delete the module as it is only displayed once
+    del LOADING, LOADING_DISP
+
     startupinfo()
     main()
