@@ -35,7 +35,7 @@ Tested on:
 - Linux Mint
 - Mac OS X
 
-Tested with python 2.7.11, python 3.5.1 and pypy 5.1.1 and pygame 1.9.2
+Tested with python 2.7.11, python 3.5.1 and pypy 5.1.1 all with pygame 1.9.2
 
 Submit an issue if it fails to run on your system with as much detail as possible
 and I will attempt to address it.
