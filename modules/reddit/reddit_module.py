@@ -63,7 +63,7 @@ class RedditModule(object):
         try:
             textwidth = self.font[1].render(text, 0, self.colour)
             textwidth = textwidth.get_rect(left=self.width / 100, top=0)
-            if textwidth[2] < self.width:
+            if textwidth[2] < self.width * 0.99:
                 return u"{}".format(text)
             else:
                 length = len(text)
