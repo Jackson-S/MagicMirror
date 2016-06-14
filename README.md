@@ -11,7 +11,7 @@ Modular magic mirror display written in python.
 
 ######Options:
 - -h help
-- -f fullscreen
+- -f full-screen
 - -r resolution (width height)
 
 ####Settings:

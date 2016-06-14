@@ -1,12 +1,11 @@
 # -*- coding: UTF-8 -*-
 
-#############################################################################
-# All settings in this file are user-changable. Don't change the formatting #
-# or you may cause weird bugs. I will not toubleshoot issues if you have    #
-# modified this file and don't include it in the bug report! Please note    #
-# the comments above settings as there are some bugs caused by changing     #
-# settings I am already aware of and they are all listed in the comments.   #
-#############################################################################
+""" All settings in this file are user-changeable. Don't change the formatting
+    or you may cause weird bugs. I will not troubleshoot issues if you have
+    modified this file and don't include it in the bug report! Please note
+    the comments above settings as there are some bugs caused by changing
+    settings I am already aware of and they are all listed in the comments.
+"""
 
 '''Main Settings'''
 version = "0.4"
@@ -17,11 +16,11 @@ mouse_visible = False
 # Show debug activity of stdout, useful for module creation, and debugging:
 show_debug = False
 
-# If the network connection is lost this is the amount of tries to redownload
+# If the network connection is lost this is the amount of tries to re-download
 # data after failure:
 attempts = 5
 
-# Sets font options and sizes, TTF fonts only, number is scale factor (multlied
+# Sets font options and sizes, TTF fonts only, number is scale factor (multiplied
 # with resolution height):
 # 0 = Loading font,
 # 1 = City/Time font,
@@ -39,13 +38,13 @@ fonts = [("resources/font-heavy.ttf", 0.14),
          ("resources/weather-icons.ttf", 0.25),
          ("resources/font-regular.ttf", 0.08),
          ("resources/font-light.ttf", 0.047)
-        ]
+         ]
 
 # Change the colours around if you'd like. (R, G, B):
-colour = [(0, 0, 0),        # Background
+colour = [(0, 0, 0),  # Background
           (128, 128, 128),  # Grey-text
-          (255, 255, 255)   # Foreground
-         ]
+          (255, 255, 255)  # Foreground
+          ]
 
 '''BOMWeatherModule Settings'''
 # City to get weather for, Australian capitol cities only:
@@ -56,7 +55,6 @@ weather_city = "Sydney"
 weather_update_delay = 3600
 
 saved_weather_data_path = "resources/weather_data"
-
 
 '''RedditModule Settings'''
 reddit_refresh_delay = 3600
@@ -74,8 +72,7 @@ reddit_subreddits = ["Python",
                      "Worldnews",
                      "Australia",
                      "Sydney"
-                    ]
-
+                     ]
 
 '''TimeModule Settings'''
 # 0 = 24hr

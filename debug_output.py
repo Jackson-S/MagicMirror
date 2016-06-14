@@ -1,15 +1,17 @@
 # -*- coding: UTF-8 -*-
-'''Displays timestamped module info as well as system info'''
+"""Displays timestamped module info as well as system info"""
 
 import time
 from os import uname
 from sys import version as pyver
+
 import pygame
-from config.settings import show_debug as show
+
+from config.settings import show_debug
 
 
-def startupinfo(show_debug=show):
-    '''Prints system information to stdout'''
+def startupinfo():
+    """Prints system information to stdout"""
     if show_debug is True:
         try:
             print("OS={}".format(
@@ -42,8 +44,8 @@ def startupinfo(show_debug=show):
             pass
 
 
-def timestamp(activity, priority=0, show_debug=show):
-    '''Prints timestamps of functions'''
+def timestamp(activity, priority=0):
+    """Prints timestamps of functions"""
     if show_debug is True or priority > 0:
         year, month, day, hour, minute, second = time.localtime()[0:6]
         print("{}/{}/{} {}:{}:{} - {}".format(

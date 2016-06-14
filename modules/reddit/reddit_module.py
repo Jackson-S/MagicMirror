@@ -1,14 +1,17 @@
 # -*- coding: UTF-8 -*-
-'''Shows a scrolling news headline ticker from reddit.com'''
+"""Shows a scrolling news headline ticker from reddit.com"""
 import time
 from platform import system
+
 import praw
+
 import config.settings as settings
 from debug_output import timestamp
 
 
 class RedditModule(object):
-    '''Fetches headlines from reddit.com'''
+    """Fetches headlines from reddit.com"""
+
     def __init__(self, width, height, colour, font):
         timestamp("Initialising news module...")
         self.font = (font[0], font[1])
@@ -21,7 +24,7 @@ class RedditModule(object):
         self.nextrefreshtime = 0
 
     def update(self):
-        '''called when update is triggered. return next item'''
+        """called when update is triggered. return next item"""
         if self.nextrefreshtime < time.time():
             self.nextrefreshtime = time.time() + settings.reddit_refresh_delay
             self.stories = []
@@ -31,7 +34,7 @@ class RedditModule(object):
         return self.stories[self.count % len(self.stories)]
 
     def need_update(self):
-        '''Returns true if update required'''
+        """Returns true if update required"""
         if time.time() >= self.nextupdatetime:
             self.nextupdatetime = time.time() + settings.refresh_time
             return True
@@ -39,7 +42,7 @@ class RedditModule(object):
             return False
 
     def fetch_news(self):
-        '''Gets new stories when called'''
+        """Gets new stories when called"""
         for subreddit in settings.reddit_subreddits:
             timestamp("Fetching subreddit - {}...".format(subreddit))
             useragent = "{}:MagicMirror/Jackson-S/com.github:{} (by /u/plainchips)"
@@ -49,26 +52,26 @@ class RedditModule(object):
             sub = sub.get_top_from_day(limit=settings.reddit_item_count)
             for item in sub:
                 body = self.font[1].render(self.truncate(item.title), 1, self.colour)
-                body_pos = body.get_rect(left=0, bottom=self.height)
+                body_pos = body.get_rect(left=self.width / 100, bottom=self.height)
                 title = self.font[0].render(subreddit.title(), 1, self.colour)
-                title_height = self.height-body_pos[3]
-                title_pos = title.get_rect(left=0, bottom=title_height)
+                title_height = self.height - body_pos[3]
+                title_pos = title.get_rect(left=self.width / 100, bottom=title_height)
                 self.stories.append(((body, body_pos), (title, title_pos)))
 
     def truncate(self, text):
-        '''Truancates text passed in if it is too wide for screen'''
+        """Truncates text passed in if it is too wide for screen"""
         try:
             textwidth = self.font[1].render(text, 0, self.colour)
-            textwidth = textwidth.get_rect(left=0, top=0)
+            textwidth = textwidth.get_rect(left=self.width / 100, top=0)
             if textwidth[2] < self.width:
                 return u"{}".format(text)
             else:
                 length = len(text)
-                while textwidth[2] > self.width*0.99:
+                while textwidth[2] > self.width * 0.99:
                     length -= 1
-                    text = u" ".join(text[:length+1].split(" ")[:-1]) + u"…"
+                    text = u" ".join(text[:length + 1].split(" ")[:-1]) + u"…"
                     textwidth = self.font[1].render(text, 0, self.colour)
-                    textwidth = textwidth.get_rect(left=0, top=0)
+                    textwidth = textwidth.get_rect(left=self.width / 100, top=0)
                 return text
         except UnicodeError:
             timestamp("Error shortening string")

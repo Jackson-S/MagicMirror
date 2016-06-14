@@ -1,7 +1,7 @@
 #!/usr/bin/env/python3
 # -*- coding: UTF-8 -*-
 
-''' Python based modular magic mirror application,
+""" Python based modular magic mirror application,
     design your own modules or use the included ones!
 
     Program and included modules are licensed under the
@@ -11,21 +11,25 @@
     whose licenses can be found in the LICENSE.md file
     or through the managing body in cases where licenses
     could not be obtained.
-'''
+"""
 
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
+
 import argparse
-import time
+
 import pygame
+
 import config.settings as settings
 from debug_output import timestamp, startupinfo
 from modules.bom.bom_weather_module import BOMWeatherModule
-from modules.time.time_module import TimeModule
-from modules.reddit.reddit_module import RedditModule
 from modules.loading.loadingmodule import LoadingModule
+from modules.reddit.reddit_module import RedditModule
+from modules.time.time_module import TimeModule
+
+
 # from modules.framerate.framerate_module import FramerateModule
 
 #############################################################################
@@ -35,7 +39,7 @@ from modules.loading.loadingmodule import LoadingModule
 
 
 def get_display_mode():
-    '''returns the desired display mode for the display object'''
+    """returns the desired display mode for the display object"""
     # Parse all display arguments:
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--fullscreen",
@@ -53,11 +57,11 @@ def get_display_mode():
     else:
         mode = 0
     res = parser.parse_args().resolution
-    return(res[0], res[1], mode)
+    return res[0], res[1], mode
 
 
 def check_events(events):
-    '''Checks for keyboard events and quits if necessary'''
+    """Checks for keyboard events and quits if necessary"""
     for event in events:
         # 2 = pygame.KEYDOWN, 27 = pygame.K_ESCAPE
         if event.type == 2 and event.key == 27:
@@ -67,7 +71,7 @@ def check_events(events):
 
 
 def main():
-    '''UI of the program, loads and draws all modules.'''
+    """UI of the program, loads and draws all modules."""
 
     timestamp("Initialising main program...")
     # Initialises the display
@@ -77,20 +81,20 @@ def main():
     timestamp("Loading modules...")
     modules = []
 
-    ############################################################################
-    # '''To add a new module first add it to the import list at the top        #
-    # and then add it to this list using this format:                          #
-    #                                                                          #
-    # timestamp("Loading SampleModule")                                        #
-    # modules.append(SampleModule(WIDTH, HEIGHT, COLOUR[2], [OTHER]))          #
-    #                                                                          #
-    # COLOUR[2] is the foreground colour, and other is anything else           #
-    # your module requires from the main loop in order to display correctly.   #
-    # Fonts can either be imported here or created in module in the __init__   #
-    # function.                                                                #
-    # The timestamp isn't needed but it will help with debugging               #
-    # if your module causes errors.                                            #
-    ############################################################################
+    ###########################################################################
+    # '''To add a new module first add it to the import list at the top       #
+    # and then add it to this list using this format:                         #
+    #                                                                         #
+    # timestamp("Loading SampleModule")                                       #
+    # modules.append(SampleModule(WIDTH, HEIGHT, COLOUR[2], [OTHER]))         #
+    #                                                                         #
+    # COLOUR[2] is the foreground colour, and other is anything else          #
+    # your module requires from the main loop in order to display correctly.  #
+    # Fonts can either be imported here or created in module in the __init__  #
+    # function.                                                               #
+    # The timestamp isn't needed but it will help with debugging              #
+    # if your module causes errors.                                           #
+    ###########################################################################
 
     timestamp("Loading BOMWeatherModule")
     modules.append(BOMWeatherModule(WIDTH, HEIGHT, COLOUR[2]))
@@ -98,16 +102,16 @@ def main():
     modules.append(RedditModule(WIDTH, HEIGHT, COLOUR[2], (FONT[6], FONT[7])))
     timestamp("Loading TimeModule")
     modules.append(TimeModule(WIDTH, HEIGHT, COLOUR[2], FONT[1]))
-######
+    ######
     ##############################################################
     # Enable this module to use the "hello world" sample module. #
     ##############################################################
     # timestamp("Loading SampleModule")
     # modules.append(SampleModule(WIDTH, HEIGHT, COLOUR[2]))
-######
+    ######
     timestamp("Completed loading modules.")
 
-    module_display = [None]*len(modules)
+    module_display = [None] * len(modules)
     requires_update = False
     while True:
         check_events(pygame.event.get())
@@ -117,7 +121,7 @@ def main():
                 if module.need_update() is True:
                     module_display[module_no] = module.update()
                     requires_update = True
-                    timestamp("Updating {}".format(module), show_debug=False)
+                    timestamp("Updating {}".format(module))
                 check_events(pygame.event.get())
                 # Wait 1 second before retrying to save power:
                 pygame.time.wait(1000)
@@ -141,8 +145,8 @@ if __name__ == '__main__':
         settings.colour[0],
         settings.colour[1],
         settings.colour[2]
-        ]
-    FONT = [pygame.font.Font(ttf, int(pt*HEIGHT))for ttf, pt in settings.fonts]
+    ]
+    FONT = [pygame.font.Font(ttf, int(pt * HEIGHT)) for ttf, pt in settings.fonts]
 
     # Display the loading screen (loading module):
     LOADING = LoadingModule(WIDTH, HEIGHT, COLOUR[2], FONT[0])

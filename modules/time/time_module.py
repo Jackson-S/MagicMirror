@@ -1,13 +1,15 @@
 # -*- coding: UTF-8 -*-
-'''Module to display a clock with the current time and date'''
+"""Module to display a clock with the current time and date"""
 
 import time
+
 import config.settings as settings
 from debug_output import timestamp
 
 
 class TimeModule(object):
-    '''Displays the time and date'''
+    """Displays the time and date"""
+
     def __init__(self, width, height, colour, font):
         timestamp("Initialising time module")
         self.width = width
@@ -19,7 +21,7 @@ class TimeModule(object):
         self.dformat = settings.date_format
 
     def update(self):
-        '''Updates the time and date when called'''
+        """Updates the time and date when called"""
         year, month, day, hour, minute = time.localtime()[0:5]
         date_string = self.dformat.format(y=year, m=month, d=day)
         if self.tformat == 0:
@@ -30,24 +32,24 @@ class TimeModule(object):
             else:
                 period = "am"
             if hour > 12:
-                hour = hour-12
+                hour -= 12
             if hour == 0:
                 hour = 12
             time_string = "{h}:{m:02d} {p}".format(h=hour, m=minute, p=period)
         date_disp = self.font.render(date_string, 1, self.colour)
         time_disp = self.font.render(time_string, 1, self.colour)
         date_pos = date_disp.get_rect(
-            right=self.width*0.98,
-            top=self.height*0.01
-            )
+            right=self.width * 0.98,
+            top=self.height * 0.01
+        )
         time_pos = time_disp.get_rect(
-            right=self.width*0.98,
-            top=self.height*0.01 + date_pos[3]
-            )
-        return((date_disp, date_pos), (time_disp, time_pos))
+            right=self.width * 0.98,
+            top=self.height * 0.01 + date_pos[3]
+        )
+        return (date_disp, date_pos), (time_disp, time_pos)
 
     def need_update(self):
-        '''Returns true is update is required'''
+        """Returns true is update is required"""
         if time.time() >= self.nextupdatetime:
             self.nextupdatetime = time.time() + 10
             return True

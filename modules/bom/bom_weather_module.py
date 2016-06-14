@@ -1,18 +1,21 @@
 # -*- coding: UTF-8 -*-
-''' Shows weather conditions for the current day from the Australian
+""" Shows weather conditions for the current day from the Australian
     Bureau of Meteorology
-'''
+"""
 
 import time
 from os import remove
+
 import pygame
+
 import config.settings as settings
 import config.translations as translations
 from debug_output import timestamp
 
 
 class BOMWeatherModule(object):
-    '''Displays weather data from the Australian Bureau of Meteorology'''
+    """Displays weather data from the Australian Bureau of Meteorology"""
+
     def __init__(self, width, height, colour):
         timestamp("Initialising BOMWeatherModule module...")
         self.url = "ftp://ftp2.bom.gov.au/anon/gen/fwo/IDA00100.dat"
@@ -25,11 +28,11 @@ class BOMWeatherModule(object):
         self.nextupdatetime = time.time()
 
     def update(self):
-        '''Returns updated weather display'''
+        """Returns updated weather display"""
         return self.parse_weather_info()
 
     def need_update(self):
-        '''Returns true if update required'''
+        """Returns true if update required"""
         if time.time() >= self.nextupdatetime:
             self.nextupdatetime = time.time() + settings.weather_update_delay
             return True
@@ -37,15 +40,17 @@ class BOMWeatherModule(object):
             return False
 
     def parse_weather_info(self):
-        '''Parses the weather from the BOM data file'''
+        """Parses the weather from the BOM data file"""
 
         # Planned features:
         #  - Ability to use multiple services
 
         # Catch errors from python 2
         try:
+            # noinspection PyUnboundLocalVariable
             FileNotFoundError
         except NameError:
+            # noinspection PyPep8Naming,PyShadowingBuiltins
             FileNotFoundError = IOError
 
         try:
@@ -68,7 +73,7 @@ class BOMWeatherModule(object):
         string, result = "", []
         index = self.weatherdata.find(settings.weather_city.title())
         while True:
-            string = string + self.weatherdata[index]
+            string += self.weatherdata[index]
             index += 1
             if self.weatherdata[index] == "#":
                 result.append(string[1:])
@@ -89,33 +94,35 @@ class BOMWeatherModule(object):
             self.fonts[2].render(icon[0], 1, self.colour),
             self.fonts[3].render(desc, 1, self.colour),
             self.fonts[0].render("{}\xb0c".format(temp), 1, self.colour)
-            )
+        )
         heights = (
             item[0].get_rect(left=0, top=0)[3],
-            item[1].get_rect(left=0, top=0)[3]*0.8,
+            item[1].get_rect(left=0, top=0)[3] * 0.8,
             item[2].get_rect(left=0, top=0)[3],
             item[3].get_rect(left=0, top=0)[3]
-            )
+        )
         itempos = (
-            item[0].get_rect(left=self.width/100, top=0),
-            item[1].get_rect(left=self.width/100, top=heights[0]*0.5),
-            item[2].get_rect(left=self.width/100, top=sum(heights[0:2])),
-            item[3].get_rect(left=self.width/100, top=sum(heights[0:3]))
-            )
-        return(
+            item[0].get_rect(left=self.width / 100, top=0),
+            item[1].get_rect(left=self.width / 100, top=heights[0] * 0.5),
+            item[2].get_rect(left=self.width / 100, top=sum(heights[0:2])),
+            item[3].get_rect(left=self.width / 100, top=sum(heights[0:3]))
+        )
+        return (
             (item[0], itempos[0]),
             (item[1], itempos[1]),
             (item[2], itempos[2]),
             (item[3], itempos[3])
-            )
+        )
 
+    # noinspection PyCompatibility,PyCompatibility
     def ioerror(self):
-        '''Called in the case of a file read error. Re-downloads the file'''
+        """Called in the case of a file read error. Re-downloads the file"""
         timestamp("Save file read error occurred. Trying again.")
         try:
             from urllib.request import Request, urlopen, URLError
-        # For python2.7 compatability:
+        # For python 2 compatibility:
         except ImportError:
+            # noinspection PyUnresolvedReferences,PyUnresolvedReferences,PyUnresolvedReferences,PyUnresolvedReferences
             from urllib2 import Request, urlopen, URLError
         try:
             with open(settings.saved_weather_data_path, "w") as save_data:
@@ -127,7 +134,7 @@ class BOMWeatherModule(object):
             self.ioerror()
 
     def getfonts(self):
-        '''Returns the fonts for the module'''
-        fonts = [pygame.font.Font(ttf, int(size*self.height))
+        """Returns the fonts for the module"""
+        fonts = [pygame.font.Font(ttf, int(size * self.height))
                  for ttf, size in settings.fonts]
-        return(fonts[2], fonts[1], fonts[5], fonts[3])
+        return fonts[2], fonts[1], fonts[5], fonts[3]

@@ -1,1 +1,1 @@
-# Needed for python 2 compatability
+# Needed for python 2 compatibility
