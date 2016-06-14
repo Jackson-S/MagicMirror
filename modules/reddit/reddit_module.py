@@ -52,9 +52,9 @@ class RedditModule(object):
             sub = sub.get_top_from_day(limit=settings.reddit_item_count)
             for item in sub:
                 body = self.font[1].render(self.truncate(item.title), 1, self.colour)
-                body_pos = body.get_rect(left=self.width / 100, bottom=self.height)
+                body_pos = body.get_rect(left=self.width / 100, bottom=self.height * 0.99)
                 title = self.font[0].render(subreddit.title(), 1, self.colour)
-                title_height = self.height - body_pos[3]
+                title_height = self.height * 0.99 - body_pos[3]
                 title_pos = title.get_rect(left=self.width / 100, bottom=title_height)
                 self.stories.append(((body, body_pos), (title, title_pos)))
 
