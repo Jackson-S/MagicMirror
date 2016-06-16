@@ -66,13 +66,13 @@ class PictureModule(object):
         """
         size = image.get_rect(left=0, top=0)
         x, y = size[2], size[3]
-        if y <= x:
+        if y >= x:
             image = pygame.transform.smoothscale(
                 image, (int((x / y) * self.height), self.height))
         else:
             image = pygame.transform.smoothscale(
                 image, (self.width, int((y / x) * self.width)))
-        return image, image.get_rect(centerx=self.width/2, centery=self.height/2)
+        return image, image.get_rect(centerx=self.width / 2, centery=self.height / 2)
 
     def need_update(self):
         """ called once per frame, returns true if update() needs to be called,

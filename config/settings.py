@@ -7,6 +7,8 @@
     settings I am already aware of and they are all listed in the comments.
 """
 
+from os import path
+
 '''Main Settings'''
 version = "0.5"
 
@@ -67,11 +69,8 @@ reddit_item_count = 10
 refresh_time = 6
 
 # Subreddits to get headlines from:
-reddit_subreddits = ["Python",
-                     "Raspberry_pi",
-                     "Worldnews",
-                     "Australia",
-                     "Sydney"
+reddit_subreddits = [
+                     "worldnews"
                      ]
 
 '''TimeModule Settings'''
@@ -85,4 +84,4 @@ display_date = True
 
 '''Picture Display Settings'''
 picture_delay_time = 10
-picturepath = ("pictures")
+picturepath = path.join("resources", "images")

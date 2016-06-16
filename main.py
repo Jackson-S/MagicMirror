@@ -58,6 +58,7 @@ def get_display_mode():
     else:
         mode = 0
     res = parser.parse_args().resolution
+    pygame.display.set_caption("Magic Mirror")
     return res[0], res[1], mode
 
 

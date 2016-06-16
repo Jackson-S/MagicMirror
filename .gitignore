@@ -94,5 +94,3 @@ ENV/
 # Program settings
 weather_data
 
-# test images
-*.jpg
