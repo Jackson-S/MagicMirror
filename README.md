@@ -24,6 +24,10 @@ To create a new module follow the instructions laid out in the sample module, if
 issues that you believe are caused by the application and not your module then please add it to the
 issue tracker and I will try and address it.
 
+#####Image Module:
+To disable background images just remove all pictures under resources/images or comment out where it's
+loaded under main.py. 
+
 ####Compatability:
 Requires pygame, which can be obtained via brew on osx (via "brew install homebrew/python/pygame --with-python3") or
 via apt-get (sudo apt-get install python-pygame) on most linux distributions. Note that some linux distributions
