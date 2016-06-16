@@ -13,7 +13,7 @@ class RedditModule(object):
     """Fetches headlines from reddit.com"""
 
     def __init__(self, width, height, colour, font):
-        timestamp("Initialising news module...")
+        timestamp("Initialising reddit module...")
         self.font = (font[0], font[1])
         self.colour = colour
         self.width = width
@@ -25,13 +25,16 @@ class RedditModule(object):
 
     def update(self):
         """called when update is triggered. return next item"""
+        timestamp("Updating Reddit module...")
         if self.nextrefreshtime < time.time():
             self.nextrefreshtime = time.time() + settings.reddit_refresh_delay
             self.stories = []
             self.fetch_news()
             self.count = 0
         self.count += 1
-        return self.stories[self.count % len(self.stories)]
+        result = self.stories[self.count % len(self.stories)]
+        timestamp("Completed updating Reddit module...")
+        return result
 
     def need_update(self):
         """Returns true if update required"""

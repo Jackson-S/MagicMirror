@@ -8,7 +8,7 @@
 """
 
 '''Main Settings'''
-version = "0.4"
+version = "0.5"
 
 # Allows mouse to be visible on the window, if you want that for some reason:
 mouse_visible = False
@@ -80,3 +80,9 @@ reddit_subreddits = ["Python",
 time_format = 1
 # for a leading 0 in the month and day use "{d:02d}-{m:02d}-{y}":
 date_format = "{d:02d}-{m:02d}-{y}"
+# select if you want the date to display or not:
+display_date = True
+
+'''Picture Display Settings'''
+picture_delay_time = 10
+picturepath = ("pictures")

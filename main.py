@@ -28,6 +28,7 @@ from modules.bom.bom_weather_module import BOMWeatherModule
 from modules.loading.loadingmodule import LoadingModule
 from modules.reddit.reddit_module import RedditModule
 from modules.time.time_module import TimeModule
+from modules.picture.picturemodule import PictureModule
 
 
 # from modules.framerate.framerate_module import FramerateModule
@@ -96,6 +97,8 @@ def main():
     # if your module causes errors.                                           #
     ###########################################################################
 
+    timestamp("Loading PictureModule")
+    modules.append(PictureModule(WIDTH, HEIGHT))
     timestamp("Loading BOMWeatherModule")
     modules.append(BOMWeatherModule(WIDTH, HEIGHT, COLOUR[2]))
     timestamp("Loading RedditModule")
@@ -113,25 +116,36 @@ def main():
 
     module_display = [None] * len(modules)
     requires_update = False
+    waited = False
     while True:
         check_events(pygame.event.get())
         game_clock.tick()
-        while requires_update is False:
+        while True:
             for module_no, module in enumerate(modules):
                 if module.need_update() is True:
                     module_display[module_no] = module.update()
                     requires_update = True
-                    timestamp("Updating {}".format(module))
                 check_events(pygame.event.get())
-                # Wait 1 second before retrying to save power:
-                pygame.time.wait(1000)
+            if requires_update is True:
+                # Wait 0.5 seconds to see if we can group
+                # any screen updates to save power:
+                if waited is False:
+                    pygame.time.wait(500)
+                    waited = True
+                else:
+                    waited = False
+                    break
+            else:
+                pygame.time.wait(1)
         if requires_update is True:
+            timestamp("Commencing screen update...")
             SCREEN.fill(COLOUR[0])
             for module in module_display:
                 for item, item_pos in module:
                     SCREEN.blit(item, item_pos)
             requires_update = False
             pygame.display.flip()
+            timestamp("Completed screen update...\n")
         check_events(pygame.event.get())
 
 
