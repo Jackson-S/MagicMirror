@@ -22,7 +22,7 @@ class PictureModule(object):
         self.width, self.height = width, height
         self.updatedelay = picture_delay_time
         self.nextupdatetime = 0
-        self.counter = 1
+        self.counter = 0
         self.images = self.get_images()
 
     def update(self):
@@ -32,22 +32,23 @@ class PictureModule(object):
         """
         timestamp("Updating picture module...")
 
-        # Check there are images available in the folder, if not return nothing
-        # and mark next update time as essentially never
+        # Return image counter to 0 to properly scroll through images.
         if len(self.images) == 0:
-            self.updatedelay = int(2e32-1)
+            self.updatedelay = int(2e16)
             return []
-        # try/except for cases where the image filtering doesn't work for some
-        # reason or a bad image is returned so this doesn't crash everything.
         try:
             image, imagepos = self.resize(
-                pygame.image.load(self.images[self.counter % len(self.images)]))
+                pygame.image.load(self.images[
+                    self.counter % len(self.images)
+                    ]))
             image.convert()
             image.set_alpha(128)
-        except pygame.error:
             self.counter += 1
+        except pygame.error:
+            # If something goes wrong (not a properly formed image for example)
+            # retry on the next image:
+            timestamp("Image update failed, trying again...")
             return self.update()
-        self.counter += 1
         timestamp("Completed updating picture module...")
         return [[image, imagepos]]
 
@@ -68,10 +69,14 @@ class PictureModule(object):
         x, y = size[2], size[3]
         if y >= x:
             image = pygame.transform.smoothscale(
-                image, (int((x / y) * self.height), self.height))
+                image,
+                (int((x / y) * self.height), self.height)
+                )
         else:
             image = pygame.transform.smoothscale(
-                image, (self.width, int((y / x) * self.width)))
+                image,
+                (self.width, int((y / x) * self.width))
+                )
         return image, image.get_rect(centerx=self.width / 2, centery=self.height / 2)
 
     def need_update(self):

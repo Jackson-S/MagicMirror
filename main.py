@@ -22,16 +22,15 @@ import argparse
 
 import pygame
 
-import config.settings as settings
+from config.settings import fonts, colour, mouse_visible
 from debug_output import timestamp, startupinfo
+
 from modules.bom.bom_weather_module import BOMWeatherModule
 from modules.loading.loadingmodule import LoadingModule
 from modules.reddit.reddit_module import RedditModule
 from modules.time.time_module import TimeModule
 from modules.picture.picturemodule import PictureModule
-
-
-# from modules.framerate.framerate_module import FramerateModule
+from modules.framerate.framerate_module import FramerateModule
 
 #############################################################################
 # Tutorial module below, uncomment and follow instructions in main() to try #
@@ -62,35 +61,45 @@ def get_display_mode():
     return res[0], res[1], mode
 
 
-def check_events(events):
+def cleanquit():
+    timestamp("Quitting.")
+    pygame.quit()
+    quit()
+
+
+def check_events():
     """Checks for keyboard events and quits if necessary"""
-    for event in events:
-        # 2 = pygame.KEYDOWN, 27 = pygame.K_ESCAPE
-        if event.type == 2 and event.key == 27:
-            timestamp("Quitting...")
-            pygame.quit()
-            quit()
+    for event in pygame.event.get():
+        # 2 = pygame.KEYDOWN, 27 = pygame.K_ESCAPE, 12 = window x button.
+        if (event.type == 2 and event.key == 27) or (event.type == 12):
+            cleanquit()
 
 
-def main():
+def loadingscreen(screen):
+    """Displays the loading screen"""
+    module = LoadingModule(WIDTH, HEIGHT, COLOUR[2], FONT[0])
+    text, textpos = module.update()
+    screen.fill(COLOUR[0])
+    screen.blit(text, textpos)
+    pygame.display.flip()
+
+
+def main(screen):
     """UI of the program, loads and draws all modules."""
 
     timestamp("Initialising main program...")
+    startupinfo()
     # Initialises the display
     # Enables clock, used for frame rate limiter:
     game_clock = pygame.time.Clock()
-    pygame.mouse.set_visible(settings.mouse_visible)
-    timestamp("Loading modules...")
-    modules = []
+    pygame.mouse.set_visible(mouse_visible)
 
     ###########################################################################
     # '''To add a new module first add it to the import list at the top       #
     # and then add it to this list using this format:                         #
+    #     SampleModule(WIDTH, HEIGHT, COLOUR[2])                              #
     #                                                                         #
-    # timestamp("Loading SampleModule")                                       #
-    # modules.append(SampleModule(WIDTH, HEIGHT, COLOUR[2], [OTHER]))         #
-    #                                                                         #
-    # COLOUR[2] is the foreground colour, and other is anything else          #
+    # COLOUR[2] is the foreground colour, add to the end anything else        #
     # your module requires from the main loop in order to display correctly.  #
     # Fonts can either be imported here or created in module in the __init__  #
     # function.                                                               #
@@ -98,79 +107,50 @@ def main():
     # if your module causes errors.                                           #
     ###########################################################################
 
-    timestamp("Loading PictureModule")
-    modules.append(PictureModule(WIDTH, HEIGHT))
-    timestamp("Loading BOMWeatherModule")
-    modules.append(BOMWeatherModule(WIDTH, HEIGHT, COLOUR[2]))
-    timestamp("Loading RedditModule")
-    modules.append(RedditModule(WIDTH, HEIGHT, COLOUR[2], (FONT[6], FONT[7])))
-    timestamp("Loading TimeModule")
-    modules.append(TimeModule(WIDTH, HEIGHT, COLOUR[2], FONT[1]))
-    ######
-    ##############################################################
-    # Enable this module to use the "hello world" sample module. #
-    ##############################################################
-    # timestamp("Loading SampleModule")
-    # modules.append(SampleModule(WIDTH, HEIGHT, COLOUR[2]))
-    ######
+    timestamp("Loading modules...")
+    modules = [PictureModule(WIDTH, HEIGHT),
+               BOMWeatherModule(WIDTH, HEIGHT, COLOUR[2]),
+               RedditModule(WIDTH, HEIGHT, COLOUR[2], [FONT[6], FONT[7]]),
+               TimeModule(WIDTH, HEIGHT, COLOUR[2], FONT[1]),
+               # SampleModule(WIDTH, HEIGHT, COLOUR[2])
+               ]
     timestamp("Completed loading modules.")
 
     module_display = [None] * len(modules)
-    requires_update = False
-    waited = False
+    waited = requires_update = False
     while True:
-        check_events(pygame.event.get())
         game_clock.tick()
         while True:
-            for module_no, module in enumerate(modules):
-                if module.need_update() is True:
-                    module_display[module_no] = module.update()
-                    requires_update = True
-                check_events(pygame.event.get())
-            if requires_update is True:
-                # Wait 0.5 seconds to see if we can group
-                # any screen updates to save power:
-                if waited is False:
-                    pygame.time.wait(500)
-                    waited = True
-                else:
-                    waited = False
-                    break
-            else:
-                pygame.time.wait(1)
-        if requires_update is True:
+            while requires_update is False:
+                for module_no, module in enumerate(modules):
+                    if module.need_update() is True:
+                        module_display[module_no] = module.update()
+                        requires_update = True
+                check_events()
+                pygame.time.wait(200)
             timestamp("Commencing screen update...")
-            SCREEN.fill(COLOUR[0])
+            screen.fill(COLOUR[0])
             for module in module_display:
                 for item, item_pos in module:
-                    SCREEN.blit(item, item_pos)
-            requires_update = False
+                    screen.blit(item, item_pos)
             pygame.display.flip()
+            requires_update = False
             timestamp("Completed screen update...\n")
-        check_events(pygame.event.get())
 
 
 if __name__ == '__main__':
     pygame.init()
+    # Fetches passed arguments and gets the current screen size:
     WIDTH, HEIGHT, MODE = get_display_mode()
     SCREEN = pygame.display.set_mode((WIDTH, HEIGHT), MODE)
-
     # Initialise the fonts and colours from settings.py:
-    COLOUR = [
-        settings.colour[0],
-        settings.colour[1],
-        settings.colour[2]
-    ]
-    FONT = [pygame.font.Font(ttf, int(pt * HEIGHT)) for ttf, pt in settings.fonts]
-
-    # Display the loading screen (loading module):
-    LOADING = LoadingModule(WIDTH, HEIGHT, COLOUR[2], FONT[0])
-    LOADING_DISP = LOADING.update()
-    SCREEN.fill(COLOUR[0])
-    SCREEN.blit(LOADING_DISP[0], LOADING_DISP[1])
-    pygame.display.flip()
-    # Delete the module as it is only displayed once
-    del LOADING, LOADING_DISP
-
-    startupinfo()
-    main()
+    COLOUR = [colour[0], colour[1], colour[2]]
+    FONT = [pygame.font.Font(ttf, int(pt * HEIGHT)) for ttf, pt in fonts]
+    # Display the loading screen (LoadingModule):
+    loadingscreen(SCREEN)
+    # Redirect keyboard interrupt to standard close procedure. Suppresses
+    # assosciated warnings:
+    try:
+        main(SCREEN)
+    except KeyboardInterrupt:
+        cleanquit()

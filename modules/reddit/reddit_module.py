@@ -18,17 +18,17 @@ class RedditModule(object):
         self.colour = colour
         self.width = width
         self.height = height
-        self.stories = []
+        self.stories = self.fetch_news()
         self.count = 0
         self.nextupdatetime = 0
-        self.nextrefreshtime = 0
+        self.nextrefreshtime = time.time() + settings.reddit_refresh_delay
 
     def update(self):
         """called when update is triggered. return next item"""
         timestamp("Updating Reddit module...")
         if self.nextrefreshtime < time.time():
             self.nextrefreshtime = time.time() + settings.reddit_refresh_delay
-            self.stories = []
+            self.stories = self.fetch_news()
             self.fetch_news()
             self.count = 0
         self.count += 1
@@ -46,20 +46,34 @@ class RedditModule(object):
 
     def fetch_news(self):
         """Gets new stories when called"""
+        stories = []
         for subreddit in settings.reddit_subreddits:
             timestamp("Fetching subreddit - {}...".format(subreddit))
-            useragent = "{}:MagicMirror/Jackson-S/com.github:{} (by /u/plainchips)"
+            useragent = ("{}:MagicMirror/Jackson-S/com.github:{} " +
+                         "(by /u/plainchips)"
+                         )
             useragent = useragent.format(system(), settings.version)
             prawagent = praw.Reddit(user_agent=useragent)
             sub = prawagent.get_subreddit(subreddit)
             sub = sub.get_top_from_day(limit=settings.reddit_item_count)
             for item in sub:
-                body = self.font[1].render(self.truncate(item.title), 1, self.colour)
-                body_pos = body.get_rect(left=self.width / 100, bottom=self.height * 0.99)
-                title = self.font[0].render(subreddit.title(), 1, self.colour)
-                title_height = self.height * 0.99 - body_pos[3]
-                title_pos = title.get_rect(left=self.width / 100, bottom=title_height)
-                self.stories.append(((body, body_pos), (title, title_pos)))
+                body = self.font[1].render(
+                    self.truncate(item.title),
+                    1, self.colour)
+                body_pos = body.get_rect(
+                    left=self.width / 100,
+                    bottom=self.height * 0.99
+                    )
+                title = self.font[0].render(
+                    subreddit.title(),
+                    1, self.colour
+                    )
+                title_pos = title.get_rect(
+                    left=self.width / 100,
+                    bottom=self.height * 0.99 - body_pos[3]
+                    )
+                stories.append([[body, body_pos], [title, title_pos]])
+        return stories
 
     def truncate(self, text):
         """Truncates text passed in if it is too wide for screen"""
