@@ -37,6 +37,8 @@ class TimeModule(BaseModule):
                 time_string = "{h}:{m:02d} {p}".format(h=hour, m=minute, p=period)
             elif self.tformat == 2:
                 time_string = "{h}:{m:02d}".format(h=hour, m=minute)
+            else:
+                time_string = "Incorrect time format in settings"
         date_disp = self.font[1].render(date_string, 1, self.colour)
         time_disp = self.font[1].render(time_string, 1, self.colour)
         date_pos = date_disp.get_rect(
