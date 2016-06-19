@@ -3,8 +3,8 @@
 
 import time
 
-from VerboseOutput import timestamp
 from modules.BaseModule import BaseModule
+from modules.VerboseOutput import timestamp
 from settings import display_date, time_format, date_format
 
 
@@ -24,7 +24,7 @@ class TimeModule(BaseModule):
         # 24 hr time
         if self.tformat == 0:
             time_string = "{h:02d}:{m:02d}".format(h=hour, m=minute)
-        elif self.tformat != 0:
+        else:
             if hour > 11:
                 period = "pm"
             else:

@@ -4,6 +4,7 @@
 import time
 from settings import show_debug
 
+
 def timestamp(activity, priority=0):
     """Prints timestamps of functions"""
     if show_debug is True or priority > 0:

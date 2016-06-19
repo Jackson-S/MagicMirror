@@ -6,11 +6,11 @@
 # Required imports, any further imports
 # that you require for your module should be placed
 # below these:
-import time
 
 import pygame
+
 from modules.BaseModule import BaseModule
-from VerboseOutput import timestamp
+from modules.VerboseOutput import timestamp
 
 
 class SampleModule(BaseModule):

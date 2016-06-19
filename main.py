@@ -19,12 +19,12 @@ import argparse
 
 import pygame
 
-from VerboseOutput import timestamp
 from modules.BOMWeatherModule import BOMWeatherModule
 from modules.LoadingModule import LoadingModule
 from modules.PictureModule import PictureModule
 from modules.RedditModule import RedditModule
 from modules.TimeModule import TimeModule
+from modules.VerboseOutput import timestamp
 from settings import colour, mouse_visible
 # Framerate module, used for testing, not used now due to adaptive framerate
 # implementation:

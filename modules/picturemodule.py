@@ -5,9 +5,10 @@ from os import listdir, path
 from random import shuffle
 
 import pygame
-from VerboseOutput import timestamp
+
 from modules.BaseModule import BaseModule
-from settings import picturepath, picture_delay_time
+from modules.VerboseOutput import timestamp
+from settings import picture_path, picture_delay_time
 
 
 class PictureModule(BaseModule):
@@ -70,8 +71,8 @@ class PictureModule(BaseModule):
 
 def get_images():
     """Fetches the list of images in the folder"""
-    pictures = listdir(path=picturepath)
-    result = [path.join(picturepath, "{}".format(item)) for item in pictures
+    pictures = listdir(path=picture_path)
+    result = [path.join(picture_path, "{}".format(item)) for item in pictures
               if item.lower().endswith("jpg") or
               item.lower().endswith("png") or
               item.lower().endswith("bmp")]

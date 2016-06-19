@@ -4,8 +4,9 @@ import time
 from platform import system
 
 import praw
-from VerboseOutput import timestamp
+
 from modules.BaseModule import BaseModule
+from modules.VerboseOutput import timestamp
 from settings import (reddit_item_count,
                       reddit_refresh_delay,
                       reddit_subreddits,

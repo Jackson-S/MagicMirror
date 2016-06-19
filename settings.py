@@ -32,14 +32,14 @@ attempts = 5
 # 5 = Weather icon font,
 # 6 = Alt news title,
 # 7 = Alt news text
-fonts = [("resources/font/font-heavy.ttf", 0.14),
-         ("resources/font/font-heavy.ttf", 0.086),
-         ("resources/font/font-heavy.ttf", 0.067),
-         ("resources/font/font-light.ttf", 0.037),
-         ("resources/font/font-regular.ttf", 0.05),
-         ("resources/font/weather-icons.ttf", 0.25),
-         ("resources/font/font-regular.ttf", 0.08),
-         ("resources/font/font-light.ttf", 0.047)
+fonts = [(path.join("resources", "font", "font-heavy.ttf"), 0.14),
+         (path.join("resources", "font", "font-heavy.ttf"), 0.086),
+         (path.join("resources", "font", "font-heavy.ttf"), 0.067),
+         (path.join("resources", "font", "font-light.ttf"), 0.037),
+         (path.join("resources", "font", "font-regular.ttf"), 0.05),
+         (path.join("resources", "font", "weather-icons.ttf"), 0.25),
+         (path.join("resources", "font", "font-regular.ttf"), 0.08),
+         (path.join("resources", "font", "font-light.ttf"), 0.047)
          ]
 
 # Change the colours around if you'd like. (R, G, B):
@@ -56,7 +56,7 @@ weather_city = "Sydney"
 # Do not flood BOM, it's only current/next day weather data anyway:
 weather_update_delay = 3600
 
-saved_weather_data_path = "resources/weather_data"
+saved_weather_data_path = path.join("resources", "weather_data")
 
 '''RedditModule Settings'''
 reddit_refresh_delay = 3600
@@ -73,13 +73,14 @@ reddit_subreddits = ["worldnews"]
 
 '''TimeModule Settings'''
 # 0 = 24hr
-# 1 = 12hr
+# 1 = 12hr + am/pm
+# 2 = 12hr no am/pm
 time_format = 1
 # for a leading 0 in the month and day use "{d:02d}-{m:02d}-{y}":
-date_format = "{d:02d}-{m:02d}-{y}"
+date_format = "{d:02d}.{m:02d}.{y}"
 # select if you want the date to display or not:
 display_date = True
 
 '''Picture Display Settings'''
 picture_delay_time = 10
-picturepath = path.join("resources", "images")
+picture_path = path.join("resources", "images")

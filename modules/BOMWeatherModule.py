@@ -5,8 +5,8 @@
 
 from os import remove
 
-from VerboseOutput import timestamp
 from modules.BaseModule import BaseModule
+from modules.VerboseOutput import timestamp
 from settings import (saved_weather_data_path,
                       weather_update_delay,
                       weather_city,

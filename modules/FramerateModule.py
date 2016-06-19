@@ -5,18 +5,10 @@
 """
 
 from modules.BaseModule import BaseModule
-from settings import colour
 
 
 class FramerateModule(BaseModule):
     """Displays the framerate"""
-
-    def __init__(self, clock):
-        timestamp("Initialising FramerateModule...")
-        super(FramerateModule, self).__init__()
-        self.colour = colour[1]
-        self.clock = clock
-        self.updatedelay = 1
 
     def update(self):
         """called when update is triggered. return next item"""
