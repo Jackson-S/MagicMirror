@@ -5,10 +5,9 @@ from os import listdir, path
 from random import shuffle
 
 import pygame
-
+from VerboseOutput import timestamp
 from modules.BaseModule import BaseModule
-from config.settings import picturepath, picture_delay_time
-from debug_output import timestamp
+from settings import picturepath, picture_delay_time
 
 
 class PictureModule(BaseModule):

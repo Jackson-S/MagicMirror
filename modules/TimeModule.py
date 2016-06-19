@@ -2,9 +2,10 @@
 """Module to display a clock with the current time and date"""
 
 import time
+
+from VerboseOutput import timestamp
 from modules.BaseModule import BaseModule
-from config.settings import display_date, time_format, date_format
-from debug_output import timestamp
+from settings import display_date, time_format, date_format
 
 
 class TimeModule(BaseModule):

@@ -10,7 +10,7 @@ import time
 
 import pygame
 from modules.BaseModule import BaseModule
-from debug_output import timestamp
+from VerboseOutput import timestamp
 
 
 class SampleModule(BaseModule):
@@ -54,17 +54,6 @@ class SampleModule(BaseModule):
         # Returns "hello" with position of hello,
         # and "world" with the position of the text:
         return [[hello, hello_pos], [world, world_pos]]
-
-    def need_update(self):
-        """called once per frame, returns true if update() needs to be called,
-        if true is returned update will be called while drawing the current
-        frame, after calling need_update() on all installed modules.
-        """
-        if time.time() >= self.nextupdatetime:
-            self.nextupdatetime = time.time() + self.updatedelay
-            return True
-        else:
-            return False
 
 # FINALLY:
 # To load your module add it to the import list of main.py,

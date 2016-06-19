@@ -5,13 +5,12 @@
 
 from os import remove
 
+from VerboseOutput import timestamp
 from modules.BaseModule import BaseModule
-from config.settings import (saved_weather_data_path,
-                             weather_update_delay,
-                             weather_city,
-                             )
-from config.translations import conditions, offset
-from debug_output import timestamp
+from settings import (saved_weather_data_path,
+                      weather_update_delay,
+                      weather_city,
+                      )
 
 
 class BOMWeatherModule(BaseModule):
@@ -63,20 +62,20 @@ class BOMWeatherModule(BaseModule):
         condition = [item for item in conditions
                      if desc.find(item) != -1]
         if len(condition) > 0:
-            icon = conditions[condition[-1]]
+            condition = conditions[condition[-1]]
         else:
-            icon = u""
+            condition = conditions[unknown]
         temp = result[-2]
         desc = result[-1].title()
         item = (
             self.font[1].render(weather_city, 1, self.colour),
-            self.font[5].render(icon[0], 1, self.colour),
+            self.font[5].render(condition[0], 1, self.colour),
             self.font[3].render(desc, 1, self.colour),
             self.font[2].render("{}\xb0c".format(temp), 1, self.colour)
         )
         heights = (
-            item[0].get_rect(left=0, top=0)[3] * offset[icon][0],
-            item[1].get_rect(left=0, top=0)[3] * offset[icon][1],
+            item[0].get_rect(left=0, top=0)[3] * condition[1][0],
+            item[1].get_rect(left=0, top=0)[3] * condition[1][1],
             item[2].get_rect(left=0, top=0)[3],
             item[3].get_rect(left=0, top=0)[3]
         )
@@ -110,3 +109,25 @@ class BOMWeatherModule(BaseModule):
                 save_data.write("\n{}".format(self.weatherdata))
         except URLError:
             self.ioerror()
+
+
+conditions = {"sun": (u"", [0.7, 0.9]),
+              "clear": (u"", [0.7, 0.9]),
+              "cloud": (u"", [0.3, 0.8]),
+              "rain": (u"", [0.3, 1]),
+              "heavy rain": (u"", [0.3, 1]),
+              "shower": (u"", [0.3, 1]),
+              "storm": (u"", [0.3, 1]),
+              "thunder": (u"", [0.3, 1]),
+              "lightning": (u"", [0.3, 1]),
+              "hail": (u"", [0.3, 1]),
+              "snow": (u"", [0.3, 1]),
+              "cyclone": (u"", [0.3, 1]),
+              "wind": (u"", [0.3, 0.92]),
+              "partly cloudy": (u"", [0.3, 0.85]),
+              "light showers": (u"", [0.3, 0.9]),
+              "light rain": (u"", [0.3, 0.9]),
+              "tornado": (u"", [0.35, 0.8]),
+              "overcast": (u"", [0.3, 0.8]),
+              "unknown": (u"", [-0.2, 0.7])
+              }

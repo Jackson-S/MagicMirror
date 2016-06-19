@@ -1,6 +1,8 @@
 import time
+
 import pygame
-from config.settings import colour, fonts
+
+from settings import colour, fonts
 
 
 class BaseModule(object):

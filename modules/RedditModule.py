@@ -2,15 +2,16 @@
 """Shows a scrolling news headline ticker from reddit.com"""
 import time
 from platform import system
+
 import praw
+from VerboseOutput import timestamp
 from modules.BaseModule import BaseModule
-from config.settings import (reddit_item_count,
-                             reddit_refresh_delay,
-                             reddit_subreddits,
-                             reddit_text_display_time,
-                             version
-                             )
-from debug_output import timestamp
+from settings import (reddit_item_count,
+                      reddit_refresh_delay,
+                      reddit_subreddits,
+                      reddit_text_display_time,
+                      version
+                      )
 
 
 class RedditModule(BaseModule):

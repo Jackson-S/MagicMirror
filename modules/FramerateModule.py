@@ -5,8 +5,7 @@
 """
 
 from modules.BaseModule import BaseModule
-
-from debug_output import timestamp
+from settings import colour
 
 
 class FramerateModule(BaseModule):
@@ -15,12 +14,13 @@ class FramerateModule(BaseModule):
     def __init__(self, clock):
         timestamp("Initialising FramerateModule...")
         super(FramerateModule, self).__init__()
+        self.colour = colour[1]
         self.clock = clock
         self.updatedelay = 1
 
     def update(self):
         """called when update is triggered. return next item"""
-        fps = self.font.render("{} fps. Press Esc to quit.".format(
+        fps = self.font[3].render("{} fps. Press Esc to quit.".format(
             int(round(self.clock.get_fps()))), 1, self.colour)
         fps_pos = fps.get_rect(right=self.width * 0.995, top=0)
         return [[fps, fps_pos]]

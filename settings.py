@@ -22,7 +22,7 @@ show_debug = False
 # data after failure:
 attempts = 5
 
-# Sets font options and sizes, TTF fonts only, number is scale factor (multiplied
+# Sets font options and sizes, TTF font only, number is scale factor (multiplied
 # with resolution height):
 # 0 = Loading font,
 # 1 = City/Time font,
@@ -32,14 +32,14 @@ attempts = 5
 # 5 = Weather icon font,
 # 6 = Alt news title,
 # 7 = Alt news text
-fonts = [("resources/font-heavy.ttf", 0.14),
-         ("resources/font-heavy.ttf", 0.086),
-         ("resources/font-heavy.ttf", 0.067),
-         ("resources/font-light.ttf", 0.037),
-         ("resources/font-regular.ttf", 0.05),
-         ("resources/weather-icons.ttf", 0.25),
-         ("resources/font-regular.ttf", 0.08),
-         ("resources/font-light.ttf", 0.047)
+fonts = [("resources/font/font-heavy.ttf", 0.14),
+         ("resources/font/font-heavy.ttf", 0.086),
+         ("resources/font/font-heavy.ttf", 0.067),
+         ("resources/font/font-light.ttf", 0.037),
+         ("resources/font/font-regular.ttf", 0.05),
+         ("resources/font/weather-icons.ttf", 0.25),
+         ("resources/font/font-regular.ttf", 0.08),
+         ("resources/font/font-light.ttf", 0.047)
          ]
 
 # Change the colours around if you'd like. (R, G, B):

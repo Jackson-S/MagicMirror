@@ -13,27 +13,23 @@
     could not be obtained.
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import argparse
 
 import pygame
 
-from config.settings import fonts, colour, mouse_visible
-from debug_output import timestamp, startupinfo
-
-from modules.loading.loadingmodule import LoadingModule
-from modules.picture.picturemodule import PictureModule
-from modules.bom.bom_weather_module import BOMWeatherModule
-from modules.reddit.reddit_module import RedditModule
-from modules.time.time_module import TimeModule
-
-#############################################################################
-# Tutorial module below, uncomment and follow instructions in main() to try #
-#############################################################################
+from VerboseOutput import timestamp
+from modules.BOMWeatherModule import BOMWeatherModule
+from modules.LoadingModule import LoadingModule
+from modules.PictureModule import PictureModule
+from modules.RedditModule import RedditModule
+from modules.TimeModule import TimeModule
+from settings import colour, mouse_visible
+# Framerate module, used for testing, not used now due to adaptive framerate
+# implementation:
+# from modules.framerate.framerate_module import FramerateModule
+# Sample module, uncomment and follow instructions in main() to try:
 # from modules.sample.samplemodule import SampleModule
 
 
@@ -79,16 +75,15 @@ def loadingscreen(screen):
     """Displays the loading screen"""
     module = LoadingModule()
     text, textpos = module.update()
-    screen.fill(COLOUR[0])
+    screen.fill(colour[0])
     screen.blit(text, textpos)
     pygame.display.flip()
 
 
 def main(screen):
     """UI of the program, loads and draws all modules."""
-
     timestamp("Initialising main program...")
-    startupinfo()
+    loadingscreen(SCREEN)
     # Initialises the display
     # Enables clock, used for frame rate limiter:
     game_clock = pygame.time.Clock()
@@ -97,25 +92,19 @@ def main(screen):
     ###########################################################################
     # '''To add a new module first add it to the import list at the top       #
     # and then add it to this list using this format:                         #
-    #     SampleModule(WIDTH, HEIGHT, COLOUR[2])                              #
+    #     SampleModule([required pass-ins])                                   #
     #                                                                         #
-    # COLOUR[2] is the foreground colour, add to the end anything else        #
-    # your module requires from the main loop in order to display correctly.  #
-    # Fonts can either be imported here or created in module in the __init__  #
-    # function.                                                               #
-    # The timestamp isn't needed but it will help with debugging              #
-    # if your module causes errors.                                           #
+    # if your module requires from the main loop in order to display          #
+    # correctly it can be added in here                                       #
     ###########################################################################
 
     timestamp("Loading modules...")
     modules = [PictureModule(),
                BOMWeatherModule(),
                RedditModule(),
-               TimeModule(),
-               # SampleModule()
+               TimeModule()
                ]
     timestamp("Completed loading modules.")
-
     module_display = [None] * len(modules)
     requires_update = False
     while True:
@@ -129,7 +118,7 @@ def main(screen):
                 check_events()
                 pygame.time.wait(200)
             timestamp("Commencing screen update...")
-            screen.fill(COLOUR[0])
+            screen.fill(colour[0])
             for module in module_display:
                 for item, item_pos in module:
                     screen.blit(item, item_pos)
@@ -143,11 +132,6 @@ if __name__ == '__main__':
     # Fetches passed arguments and gets the current screen size:
     WIDTH, HEIGHT, MODE = get_display_mode()
     SCREEN = pygame.display.set_mode((WIDTH, HEIGHT), MODE)
-    # Initialise the fonts and colours from settings.py:
-    COLOUR = [colour[0], colour[1], colour[2]]
-    FONT = [pygame.font.Font(ttf, int(pt * HEIGHT)) for ttf, pt in fonts]
-    # Display the loading screen (LoadingModule):
-    loadingscreen(SCREEN)
     # Redirect keyboard interrupt to standard close procedure. Suppresses
     # associated warnings:
     try:
