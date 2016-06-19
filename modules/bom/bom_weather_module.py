@@ -3,59 +3,35 @@
     Bureau of Meteorology
 """
 
-import time
 from os import remove
 
-import pygame
-
+from modules.BaseModule import BaseModule
 from config.settings import (saved_weather_data_path,
                              weather_update_delay,
                              weather_city,
-                             fonts as fontlist
-                            )
+                             )
 from config.translations import conditions, offset
 from debug_output import timestamp
 
 
-class BOMWeatherModule(object):
+class BOMWeatherModule(BaseModule):
     """Displays weather data from the Australian Bureau of Meteorology"""
-
-    def __init__(self, width, height, colour):
+    def __init__(self):
         timestamp("Initialising BOMWeatherModule module...")
+        super(BOMWeatherModule, self).__init__()
         self.url = "ftp://ftp2.bom.gov.au/anon/gen/fwo/IDA00100.dat"
-        self.width, self.height = width, height
-        self.colour = colour
-        self.fonts = self.getfonts()
         self.savepath = saved_weather_data_path
+        self.updatedelay = weather_update_delay
         self.weatherdata = None
         self.connectionattempts = 0
-        self.nextupdatetime = time.time()
 
     def update(self):
         """Returns updated weather display"""
-        timestamp("Updating BOM module...")
-        return self.parse_weather_info()
-
-    def need_update(self):
-        """Returns true if update required"""
-        if time.time() >= self.nextupdatetime:
-            self.nextupdatetime = time.time() + weather_update_delay
-            return True
-        else:
-            return False
-
-    def parse_weather_info(self):
-        """Parses the weather from the BOM data file"""
-
-        # Planned features:
-        #  - Ability to use multiple services
-
         # Catch errors from python 2
         try:
             FileNotFoundError
         except NameError:
             FileNotFoundError = IOError
-
         try:
             with open(saved_weather_data_path, "r") as save_data:
                 # Get elapsed time since update and check against update delay:
@@ -68,11 +44,11 @@ class BOMWeatherModule(object):
         # Exception if weather_data can't be opened:
         except FileNotFoundError:
             self.ioerror()
-            return self.parse_weather_info()
+            return self.update()
         except ValueError:
             remove(saved_weather_data_path)
             self.ioerror()
-            return self.parse_weather_info()
+            return self.update()
         string, result = "", []
         index = self.weatherdata.find(weather_city.title())
         while True:
@@ -93,10 +69,10 @@ class BOMWeatherModule(object):
         temp = result[-2]
         desc = result[-1].title()
         item = (
-            self.fonts[1].render(weather_city, 1, self.colour),
-            self.fonts[2].render(icon[0], 1, self.colour),
-            self.fonts[3].render(desc, 1, self.colour),
-            self.fonts[0].render("{}\xb0c".format(temp), 1, self.colour)
+            self.font[1].render(weather_city, 1, self.colour),
+            self.font[5].render(icon[0], 1, self.colour),
+            self.font[3].render(desc, 1, self.colour),
+            self.font[2].render("{}\xb0c".format(temp), 1, self.colour)
         )
         heights = (
             item[0].get_rect(left=0, top=0)[3] * offset[icon][0],
@@ -134,9 +110,3 @@ class BOMWeatherModule(object):
                 save_data.write("\n{}".format(self.weatherdata))
         except URLError:
             self.ioerror()
-
-    def getfonts(self):
-        """Returns the fonts for the module"""
-        fonts = [pygame.font.Font(ttf, int(size * self.height))
-                 for ttf, size in fontlist]
-        return fonts[2], fonts[1], fonts[5], fonts[3]

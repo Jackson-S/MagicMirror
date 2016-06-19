@@ -66,12 +66,10 @@ reddit_item_count = 10
 
 # Time between story changes, requires bottom_feed
 # setting to be enabled to have any effect:
-refresh_time = 6
+reddit_text_display_time = 6
 
 # Subreddits to get headlines from:
-reddit_subreddits = [
-                     "worldnews"
-                     ]
+reddit_subreddits = ["worldnews"]
 
 '''TimeModule Settings'''
 # 0 = 24hr

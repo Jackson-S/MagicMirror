@@ -25,12 +25,11 @@ import pygame
 from config.settings import fonts, colour, mouse_visible
 from debug_output import timestamp, startupinfo
 
-from modules.bom.bom_weather_module import BOMWeatherModule
 from modules.loading.loadingmodule import LoadingModule
+from modules.picture.picturemodule import PictureModule
+from modules.bom.bom_weather_module import BOMWeatherModule
 from modules.reddit.reddit_module import RedditModule
 from modules.time.time_module import TimeModule
-from modules.picture.picturemodule import PictureModule
-from modules.framerate.framerate_module import FramerateModule
 
 #############################################################################
 # Tutorial module below, uncomment and follow instructions in main() to try #
@@ -62,6 +61,7 @@ def get_display_mode():
 
 
 def cleanquit():
+    """Quits pygame correctly"""
     timestamp("Quitting.")
     pygame.quit()
     quit()
@@ -77,7 +77,7 @@ def check_events():
 
 def loadingscreen(screen):
     """Displays the loading screen"""
-    module = LoadingModule(WIDTH, HEIGHT, COLOUR[2], FONT[0])
+    module = LoadingModule()
     text, textpos = module.update()
     screen.fill(COLOUR[0])
     screen.blit(text, textpos)
@@ -108,16 +108,16 @@ def main(screen):
     ###########################################################################
 
     timestamp("Loading modules...")
-    modules = [PictureModule(WIDTH, HEIGHT),
-               BOMWeatherModule(WIDTH, HEIGHT, COLOUR[2]),
-               RedditModule(WIDTH, HEIGHT, COLOUR[2], [FONT[6], FONT[7]]),
-               TimeModule(WIDTH, HEIGHT, COLOUR[2], FONT[1]),
-               # SampleModule(WIDTH, HEIGHT, COLOUR[2])
+    modules = [PictureModule(),
+               BOMWeatherModule(),
+               RedditModule(),
+               TimeModule(),
+               # SampleModule()
                ]
     timestamp("Completed loading modules.")
 
     module_display = [None] * len(modules)
-    waited = requires_update = False
+    requires_update = False
     while True:
         game_clock.tick()
         while True:
@@ -149,7 +149,7 @@ if __name__ == '__main__':
     # Display the loading screen (LoadingModule):
     loadingscreen(SCREEN)
     # Redirect keyboard interrupt to standard close procedure. Suppresses
-    # assosciated warnings:
+    # associated warnings:
     try:
         main(SCREEN)
     except KeyboardInterrupt:

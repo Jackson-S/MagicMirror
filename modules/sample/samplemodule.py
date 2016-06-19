@@ -9,23 +9,17 @@
 import time
 
 import pygame
-
+from modules.BaseModule import BaseModule
 from debug_output import timestamp
 
 
-class SampleModule(object):
+class SampleModule(BaseModule):
     """Prints "hello" and "world" to each corner of the display"""
-
-    def __init__(self, width, height, colour):
+    def __init__(self):
         """Called once, create anything you require for future updates,
         and anything you require across more than one function here
         """
-        # Set the screen width and height:
-        self.width, self.height = width, height
-
-        # Set the colour:
-        self.colour = colour
-
+        super(SampleModule, self).__init__()
         # Set the font for the module, define the size of the font as the height
         # multiplied by the desired size to allow compatibility with different
         # screen resolutions, must be defined as an integer however:
@@ -34,10 +28,6 @@ class SampleModule(object):
         # time before the module update function is called again,
         # to allow for the display to be updated (seconds).
         self.updatedelay = 10
-
-        # Setting this will trigger the initial update time,
-        # so have this set to either 0 or time.time()
-        self.nextupdatetime = 0
 
     def update(self):
         """called when update is triggered, and should return
