@@ -110,7 +110,7 @@ def main(screen):
         # Check if vcgencmd is installed, to see if it is running on a
         # raspberry pi with the requires software installed
         call("vcgencmd")
-        modules.append(AutoOnModule)
+        modules.append(AutoOnModule())
     except:
         pass
     timestamp("Completed loading modules.")

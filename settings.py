@@ -16,7 +16,7 @@ version = "0.5"
 mouse_visible = False
 
 # Show debug activity of stdout, useful for module creation, and debugging:
-show_debug = False
+show_debug = True
 
 # If the network connection is lost this is the amount of tries to re-download
 # data after failure:

@@ -13,9 +13,6 @@ class BaseModule(object):
         self.updatedelay = 10
         self.nextupdatetime = time.time()
 
-    def update(self):
-        return []
-
     def need_update(self):
         if time.time() >= self.nextupdatetime:
             self.nextupdatetime = time.time() + self.updatedelay
