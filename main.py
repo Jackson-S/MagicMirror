@@ -19,12 +19,14 @@ import argparse
 
 import pygame
 
+from subprocess import call
 from modules.BOMWeatherModule import BOMWeatherModule
 from modules.LoadingModule import LoadingModule
 from modules.PictureModule import PictureModule
 from modules.RedditModule import RedditModule
 from modules.TimeModule import TimeModule
 from modules.VerboseOutput import timestamp
+from modules.AutoOnModule import AutoOnModule
 from settings import colour, mouse_visible
 # Framerate module, used for testing, not used now due to adaptive framerate
 # implementation:
@@ -104,6 +106,13 @@ def main(screen):
                RedditModule(),
                TimeModule()
                ]
+    try:
+        # Check if vcgencmd is installed, to see if it is running on a
+        # raspberry pi with the requires software installed
+        call("vcgencmd")
+        modules.append(AutoOnModule)
+    except:
+        pass
     timestamp("Completed loading modules.")
     module_display = [None] * len(modules)
     requires_update = False
