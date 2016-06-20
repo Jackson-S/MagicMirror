@@ -60,6 +60,10 @@ def get_display_mode():
 
 def cleanquit():
     """Quits pygame correctly"""
+    try:
+        AutoOnModule().exit()
+    except:
+        pass
     timestamp("Quitting.")
     pygame.quit()
     quit()

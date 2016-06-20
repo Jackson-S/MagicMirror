@@ -20,6 +20,9 @@ class AutoOnModule(BaseModule):
             self.current_status = get_display_status()
         return []
 
+    def exit(self):
+        subprocess.call(["vcgencmd", "display_power", "1"])
+
 
 def get_display_status():
     return int(subprocess.check_output(["vcgencmd", "display_power"])[-2])
