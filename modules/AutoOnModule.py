@@ -16,7 +16,7 @@ class AutoOnModule(BaseModule):
             subprocess.call(["vcgencmd", "display_power", "1"])
             self.current_status = get_display_status()
         if self.current_status == 1 and hour == 21:
-            subprocess.call(["vcgencmd", "display_power", "1"])
+            subprocess.call(["vcgencmd", "display_power", "0"])
             self.current_status = get_display_status()
         return []
 
